@@ -1,6 +1,6 @@
 all:
-	gcc -g -ggdb -c -o ctest.o ctest.c
-	nasm -g -f elf64 atest.asm -l atest.lst -F dwarf
-	gcc -o ctest ctest.o atest.o -fno-pie -no-pie
+	gcc -g -ggdb -c -o c.o c.c
+	nasm -g -f elf64 asm.asm -l asm.lst -F dwarf
+	gcc -o c c.o asm.o -fno-pie -no-pie
 clean:
-	rm ctest *.o *.lst
+	rm c *.o *.lst
