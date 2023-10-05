@@ -8,7 +8,7 @@ main(int argc, char *argv[]) {
 	// (55-b+1*a)/(-88/c+1)
 	signed int a, b, c;
 	printf("%d\n", sizeof(int));
-	printf("Range of signed int: 0-65535 ");
+	printf("Range of signed int: 0-65535 \n");
 	printf("a = ");
 	scanf("%d", &a);
 
