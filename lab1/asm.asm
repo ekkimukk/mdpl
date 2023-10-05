@@ -1,5 +1,5 @@
 section .data
-	a dw 100
+	x db 4
 section .text
 global asm_func
 asm_func:
