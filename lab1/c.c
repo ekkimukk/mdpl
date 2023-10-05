@@ -7,6 +7,8 @@ main(int argc, char *argv[]) {
 	// asm_func();
 	// (55-b+1*a)/(-88/c+1)
 	signed int a, b, c;
+	printf("%d\n", sizeof(int));
+	printf("Range of signed int: 0-65535 ");
 	printf("a = ");
 	scanf("%d", &a);
 
@@ -18,8 +20,8 @@ main(int argc, char *argv[]) {
 
 	// Signed Int 16-bit
 	signed int num, den, res;
-	num = (55 - b + a);
-	den = ((-88 / c) + 1);
+	num = 55 - b + a;
+	den = (-88 / c) + 1;
 	res = (num / den);
 	printf("%d\n", num);
 	printf("%d\n", den);
