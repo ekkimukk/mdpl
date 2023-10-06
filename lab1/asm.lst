@@ -15,11 +15,18 @@
     15                                  
     16                                  	; denominator
     17 00000022 66B8A8FF                	mov    ax,      -88      ; ax = -88
-    18 00000026 6699                    	cwd
+    18 00000026 6699                    	cwd						 ; ax:dx = -88
     19 00000028 668B1C25[00000000]      	mov    bx,      [sic]    ; bx = c
     20 00000030 66F7FB                  	idiv   bx                ; ax = -88 / c
     21 00000033 66FFC0                  	inc    ax                ; ax = -88 / c + 1
-    22 00000036 66890425[00000000]      	mov    [siDen], ax       ; siDen = -88 / c + 1
+    22 00000036 66890425[00000000]      	mov    [siDen], ax       ; siDen = 55 - b + a
     23                                  
-    24 0000003E C3                      	ret 
-    25                                  
+    24                                  	; result
+    25 0000003E 668B0425[00000000]      	mov    ax,      [siNum]  ; ax = 55 - b + a
+    26 00000046 6699                    	cwd						 ; ax:dx = 55 - b + a
+    27 00000048 668B1C25[00000000]      	mov    bx,      [siDen]  ; bx = -88 / c + 1
+    28 00000050 66F7FB                  	idiv   bx				 ; ax = num / den
+    29 00000053 66890425[00000000]      	mov    [siRes], ax       ; siRes = num / den
+    30                                  
+    31 0000005B C3                      	ret 
+    32                                  
