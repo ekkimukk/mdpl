@@ -14,7 +14,8 @@ void siC(signed int sia, signed int sib, signed int sic) {
 	printf("%d\n", siRes);
 }
 
-void siASM() {
+void siASM(signed int sia, signed int sib, signed int sic) {
+	sia = sia; sib = sib; sic = sic;
 	siNum = 0; siDen = 0; siRes = 0;
 	asm_func();
 }
@@ -34,8 +35,9 @@ main(int argc, char *argv[]) {
 	printf("sic = ");
 	scanf("%d", &sic);
 	
+	siASM(sia, sib, sic);
+	printf("c:\n");
 	siC(sia, sib, sic);
-	siASM();
 
 
 	return 0;
