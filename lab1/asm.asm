@@ -1,9 +1,10 @@
 section .data
-	extern sia:word , sib:word , sic:word
+	extern sia , sib , sic
+
 section .text
 	global asm_func
 asm_func:
-
-; numerator
-	mov    ax,    3
+	; numerator
+	mov    ax,    [sia]
 	inc    ax
+	ret 

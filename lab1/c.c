@@ -2,34 +2,40 @@
 #include <stdlib.h>
 extern void asm_func(void);
 
-void siC(signed int a, signed int b, signed int c) {
-	signed int num, den, res;
-	num = 55 - b + a;
-	den = (-88 / c) + 1;
-	res = (num / den);
-	printf("%d\n", num);
-	printf("%d\n", den);
-	printf("%d\n", res);
+signed int sia, sib, sic, siNum, siDen, siRes;
+
+void siC(signed int sia, signed int sib, signed int sic) {
+	siNum = 0; siDen = 0; siRes = 0;
+	siNum = 55 - sib + sia;
+	siDen = (-88 / sic) + 1;
+	siRes = (siNum / siDen);
+	printf("%d\n", siNum);
+	printf("%d\n", siDen);
+	printf("%d\n", siRes);
+}
+
+void siASM() {
+	siNum = 0; siDen = 0; siRes = 0;
+	asm_func();
 }
 
 int 
 main(int argc, char *argv[]) {
-	asm_func();
 	// (55-b+1*a)/(-88/c+1)
-	signed int a, b, c;
 	printf("Range of signed int: 0-65535 \n");
-	printf("P.S. a=0  b=10  c=-44  :)\n");
+	printf("P.S. sia=0  sib=10  sic=-44  :)\n");
 
-	printf("a = ");
-	scanf("%d", &a);
-	//
-	printf("b = ");
-	scanf("%d", &b);
-	//
-	printf("c = ");
-	scanf("%d", &c);
+	printf("sia = ");
+	scanf("%d", &sia);
+
+	printf("sib = ");
+	scanf("%d", &sib);
+
+	printf("sic = ");
+	scanf("%d", &sic);
 	
-	siC(a, b, c);
+	siC(sia, sib, sic);
+	siASM();
 
 
 	return 0;
