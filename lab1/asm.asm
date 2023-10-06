@@ -1,7 +1,9 @@
 section .data
-	x db 4
+	extern sia:word , sib:word , sic:word
 section .text
-global asm_func
+	global asm_func
 asm_func:
-	mov  eax, 4
-	inc  eax
+
+; numerator
+	mov    ax,    3
+	inc    ax

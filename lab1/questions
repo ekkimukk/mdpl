@@ -1,0 +1,2 @@
+Почему при замене .text на .code выводит [1]    6772 segmentation fault (core dumped)  ./c
+
