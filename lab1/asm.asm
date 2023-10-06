@@ -14,9 +14,15 @@ asm_func:
 	mov    [siNum], ax       ; siNum = 55 - b + a
 
 	; denominator
-	mov    bx,      -88      ; bx = -88
-	mov    ax,      [sic]    ; ax = c
+	mov    ax,      -88      ; ax = -88
+	cwd
+	mov    bx,      [sic]    ; bx = c
+	idiv   bx                ; ax = -88 / c
+	inc    ax                ; ax = -88 / c + 1
+	mov    [siDen], ax       ; siDen = -88 / c + 1
 
+	; result
+	
 
 	ret 
 
