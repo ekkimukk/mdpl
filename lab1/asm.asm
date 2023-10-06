@@ -1,10 +1,15 @@
 section .data
-	extern sia , sib , sic
-	extern siNum , siDen , siRes
+	extern sia , sib , sic , siNum , siDen , siRes
+	extern usia , usib , usic , usiNum , usiDen , usiRes
+	extern sca , scb , scc , scNum , scDen , scRes
+	extern usca , uscb , uscc , uscNum , uscDen , uscRes
 
 section .text
-	global asm_func
-asm_func:
+	global asm_signed_int
+	global asm_unsigned_int
+	global asm_signed_char
+	global asm_unsigned_char
+asm_signed_int:
 	; numerator
 	mov    bx,      [sib]    ; bx = b
 	mov    ax,      55	     ; ax = 55
@@ -28,5 +33,10 @@ asm_func:
 	idiv   bx				 ; ax = num / den
 	mov    [siRes], ax       ; siRes = num / den
 
-	ret 
+asm_unsigned_int:
+	; numerator
+
+
+
+ret 
 
