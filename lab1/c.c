@@ -8,8 +8,8 @@ extern void asm_unsigned_char(void);
 
 int16_t sia, sib, sic, siNum, siDen, siRes; // signed_int
 uint16_t usia, usib, usic, usiNum, usiDen, usiRes; // unsigned_int
-int16_t sca, scb, scc, scNum, scDen, scRes; // signed_char
-int16_t usca, uscb, uscc, uscNum, uscDen, uscRes; // unsigned_char
+int8_t sca, scb, scc, scNum, scDen, scRes; // signed_char
+int8_t usca, uscb, uscc, uscNum, uscDen, uscRes; // unsigned_char
 
 
 void siC(int16_t sia, int16_t sib, int16_t sic) {
@@ -48,7 +48,7 @@ void usiASM(uint16_t usia, uint16_t usib, uint16_t usic) {
 
 int 
 main(int argc, char *argv[]) {
-	// (55-b+1*a)/(-88/c+1)
+	// (55-b+1*a)/(-88/c+1) 
 	printf("P.S. a=0  b=10  c=-44  :)\n");
 	
 	// Signed Int
@@ -67,13 +67,13 @@ main(int argc, char *argv[]) {
 
 	// Unsigned Int
 	printf("usia = ");
-	scanf("%d", &usia);
+	scanf("%u", &usia);
 
 	printf("usib = ");
-	scanf("%d", &usib);
+	scanf("%u", &usib);
 
 	printf("usic = ");
-	scanf("%d", &usic);
+	scanf("%u", &usic);
 
 	usiASM(usia, usib, usic);
 	usiC(usia, usib, usic);
