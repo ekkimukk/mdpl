@@ -21,7 +21,6 @@ void siC(int16_t sia, int16_t sib, int16_t sic) {
 	printf("%d\n", siDen);
 	printf("%d\n", siRes);
 }
-
 void siASM(int16_t sia, int16_t sib, int16_t sic) {
 	sia = sia; sib = sib; sic = sic;
 	siNum = 0; siDen = 0; siRes = 0;
@@ -38,7 +37,6 @@ void usiC(uint16_t usia, uint16_t usib, uint16_t usic) {
 	printf("%u\n", usiDen);
 	printf("%u\n", usiRes);
 }
-
 void usiASM(uint16_t usia, uint16_t usib, uint16_t usic) {
 	usia = usia; usib = usib; usic = usic;
 	usiNum = 0; usiDen = 0; usiRes = 0;
@@ -55,18 +53,17 @@ void scC(int8_t sca, int8_t scb, int8_t scc) {
 	printf("%d\n", scDen);
 	printf("%d\n", scRes);
 }
-
 void scASM(int8_t sia, int8_t sib, int8_t sic) {
 	sca = sca; scb = scb; scc = scc;
 	scNum = 0; scDen = 0; scRes = 0;
-	asm_signed_int();
+	asm_signed_char();
 }
 
 
 
 int 
 main(int argc, char *argv[]) {
-	// (55-b+1*a)/(-88/c+1) 
+	// (55-b+1*a)/(-88/c+1)
 	printf("P.S. a=0  b=10  c=-44  :)\n");
 	/*
 	// Signed Int
@@ -111,7 +108,7 @@ main(int argc, char *argv[]) {
 	printf("%d\n", scc);
 
 	scASM(sca, scb, scc);
-	//scC(sca, scb, scc);
+	scC(sca, scb, scc);
 	// ---------------
 
 
