@@ -37,13 +37,27 @@ asm_signed_int:
 ret
 
 asm_unsigned_int:
+
+	; cleaning
+	xor    eax,     eax
+	xor    ebx,     ebx
+	xor    ecx,     ecx
+	xor    edx,     edx
+
 	; numerator
 	mov    bx,      [usib]   ; bx = b
 	mov    ax,      55	 ; ax = 55
-	sbb    ax,      bx       ; ax = 55 - b
+	sub    ax,      bx       ; ax = 55 - b
 	mov    bx,      [usia]   ; bx = a
-	adc    ax,      bx       ; ax = 55 - b + a
-	mov    [Num],   ax       ; Num = 55 - b + a
+	;расширение 	
+	cwd			 ; ax:dx
+	mov    cx,      ax
+	mov    ax,      dx
+	shl    eax,     16
+	add    ax,      cx
+
+	add    eax,     ebx      ; ax = 55 - b + a
+	mov    [Num],   eax      ; Num = 55 - b + a
 
 	; denominator
 	mov    ax,      -88      ; ax = -88
@@ -62,20 +76,37 @@ asm_unsigned_int:
 ret
 
 asm_signed_char:
+	
+	; cleaning
+	xor    eax,     eax
+	xor    ebx,     ebx
+	xor    ecx,     ecx
+	xor    edx,     edx
+
 	; numerator
-	mov    al,      [scb]    ; al = b
-	cbw                      ; ax = b
-	mov    bx,      ax       ; bx = b 
+	mov    al,   byte   [sca]    ; al = a
+	cbw
+	mov    bx,      ax       ; bx = a
 	mov    ax,      55       ; ax = 55
-	sub    ax,      bx       ; ax = 55 - b
-	mov    bx,      ax       ; bx = 55 - b
-	mov    al,      [sca]    ; al = a
-	cbw			 ; ax = a
-	add    bx,      ax       ; ax = 55 - b + a
-	mov    [Num],   ax       ; Num = ax
+	add    bx,      ax       ; ax = 55 + a
+	mov    al,   byte   [scb]    ; al = b
+	cbw
+	sub    bx,      ax       ; ax = 55 - b + a
+	mov    [Num],   bx       ; Num = ax
 
 	; denominator
+	mov    ax,      -88      ; ax = -88
+	mov    bl,      [scc]    ; bx = c
+	idiv   bl
+	cbw
+	inc    ax                ; ax = -88 / c + 1
+	mov    [Den],   ax       ; Den = ax = -88 / c + 1   
 
 	; result
+	mov    ax,      [Num]    ; ax = 55 - b + a
+	cwd			 ; ax:dx = 55 - b + a
+	mov    bx,      [Den]    ; bx = -88 / c + 1
+	idiv   bx		 ; ax = num / den
+	mov    [Res],   ax       ; Res = ax = Num / Den
 ret
 
