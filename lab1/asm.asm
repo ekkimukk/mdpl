@@ -14,15 +14,15 @@ section .text
 asm_signed_int:
 	; numerator
 	mov    bx,      [sib]    ; bx = b
-	mov    ax,      55	     ; ax = 55
+	mov    ax,      55	 ; ax = 55
 	sub    ax,      bx       ; ax = 55 - b
 	mov    bx,      [sia]    ; bx = a
 	add    ax,      bx       ; ax = 55 - b + a
 	mov    [Num],   ax       ; Num = 55 - b + a
 
-    ; denominator
+    	; denominator
 	mov    ax,      -88      ; ax = -88
-	cwd						 ; ax:dx = -88
+	cwd			 ; ax:dx = -88
 	mov    bx,      [sic]    ; bx = c
 	idiv   bx                ; ax = -88 / c
 	inc    ax                ; ax = -88 / c + 1
@@ -30,28 +30,47 @@ asm_signed_int:
 
 	; result
 	mov    ax,      [Num]    ; ax = 55 - b + a
-	cwd						 ; ax:dx = 55 - b + a
+	cwd			 ; ax:dx = 55 - b + a
 	mov    bx,      [Den]    ; bx = -88 / c + 1
-	idiv   bx				 ; ax = num / den
+	idiv   bx		 ; ax = num / den
 	mov    [Res],   ax       ; Res = ax = Num / Den
-
+ret
 
 asm_unsigned_int:
 	; numerator
+	mov    bx,      [usib]   ; bx = b
+	mov    ax,      55	 ; ax = 55
+	sbb    ax,      bx       ; ax = 55 - b
+	mov    bx,      [usia]   ; bx = a
+	adc    ax,      bx       ; ax = 55 - b + a
+	mov    [Num],   ax       ; Num = 55 - b + a
+
 	; denominator
+	mov    ax,      -88      ; ax = -88
+	cwd                      ; ax:dx = -88
+	mov    bx,      [usic]   ; bx = c
+	idiv   bx                ; ax = -88 / c
+	inc    ax                ; ax = -88 / c + 1
+	mov    [Den],   ax       ; Den = ax = -88 / c + 1   
+
 	; result
+	mov    ax,      [Num]    ; ax = 55 - b + a
+	cwd			 ; ax:dx = 55 - b + a
+	mov    bx,      [Den]    ; bx = -88 / c + 1
+	idiv   bx		 ; ax = num / den
+	mov    [Res],   ax       ; Res = ax = Num / Den
 ret
 
 asm_signed_char:
 	; numerator
-	mov  al,      [scb]    ; al = b
+	mov    al,      [scb]    ; al = b
 	cbw                      ; ax = b
 	mov    bx,      ax       ; bx = b 
 	mov    ax,      55       ; ax = 55
 	sub    ax,      bx       ; ax = 55 - b
 	mov    bx,      ax       ; bx = 55 - b
-	mov  al,      [sca]    ; al = a
-	cbw						 ; ax = a
+	mov    al,      [sca]    ; al = a
+	cbw			 ; ax = a
 	add    bx,      ax       ; ax = 55 - b + a
 	mov    [Num],   ax       ; Num = ax
 

@@ -7,7 +7,6 @@ extern void asm_signed_char(void);
 extern void asm_unsigned_char(void);
 
 int Num, Den, Res;
-signed int sNum, sDen, sRes;
 int16_t sia, sib, sic; // signed_int
 uint16_t usia, usib, usic; // unsigned_int
 int8_t sca, scb, scc; // signed_char
@@ -69,7 +68,7 @@ void scASM(int8_t sia, int8_t sib, int8_t sic) {
 int 
 main(int argc, char *argv[]) {
 	// (55-b+1*a)/(-88/c+1) 
-	
+	/*
 	// Signed Int ()
 	printf("sia = ");
 	scanf("%d", &sia);
@@ -83,7 +82,7 @@ main(int argc, char *argv[]) {
 	siASM(sia, sib, sic);
 	//siC(sia, sib, sic);
 	// ---------------
-	/*
+	*/
 	// Unsigned Int (0<->65535)
 	printf("usia = ");
 	scanf("%u", &usia);
@@ -97,7 +96,7 @@ main(int argc, char *argv[]) {
 	usiASM(usia, usib, usic);
 	usiC(usia, usib, usic);
 	// ---------------
-	
+	/*
 	// Signed Char (-128<->127)
 	printf("sca = ");
 	scanf("%d", &sca);

@@ -1,0 +1,81 @@
+     1                                  section .data
+     2                                  	extern Num  , Den  , Res
+     3                                  	extern sia  , sib  , sic
+     4                                  	extern usia , usib , usic
+     5                                  	extern sca  , scb  , scc
+     6                                  	extern usca , uscb , uscc
+     7                                  
+     8                                  section .text
+     9                                  	global asm_signed_int
+    10                                  	global asm_unsigned_int
+    11                                  	global asm_signed_char
+    12                                  	global asm_unsigned_char 
+    13                                  
+    14                                  asm_signed_int:
+    15                                  	; numerator
+    16 00000000 668B1C25[00000000]      	mov    bx,      [sib]    ; bx = b
+    17 00000008 66B83700                	mov    ax,      55	 ; ax = 55
+    18 0000000C 6629D8                  	sub    ax,      bx       ; ax = 55 - b
+    19 0000000F 668B1C25[00000000]      	mov    bx,      [sia]    ; bx = a
+    20 00000017 6601D8                  	add    ax,      bx       ; ax = 55 - b + a
+    21 0000001A 66890425[00000000]      	mov    [Num],   ax       ; Num = 55 - b + a
+    22                                  
+    23                                      	; denominator
+    24 00000022 66B8A8FF                	mov    ax,      -88      ; ax = -88
+    25 00000026 6699                    	cwd			 ; ax:dx = -88
+    26 00000028 668B1C25[00000000]      	mov    bx,      [sic]    ; bx = c
+    27 00000030 66F7FB                  	idiv   bx                ; ax = -88 / c
+    28 00000033 66FFC0                  	inc    ax                ; ax = -88 / c + 1
+    29 00000036 66890425[00000000]      	mov    [Den],   ax       ; Den = 55 / c + 1
+    30                                  
+    31                                  	; result
+    32 0000003E 668B0425[00000000]      	mov    ax,      [Num]    ; ax = 55 - b + a
+    33 00000046 6699                    	cwd			 ; ax:dx = 55 - b + a
+    34 00000048 668B1C25[00000000]      	mov    bx,      [Den]    ; bx = -88 / c + 1
+    35 00000050 66F7FB                  	idiv   bx		 ; ax = num / den
+    36 00000053 66890425[00000000]      	mov    [Res],   ax       ; Res = ax = Num / Den
+    37 0000005B C3                      ret
+    38                                  
+    39                                  asm_unsigned_int:
+    40                                  	; numerator
+    41 0000005C 668B1C25[00000000]      	mov    bx,      [usib]   ; bx = b
+    42 00000064 66B83700                	mov    ax,      55	 ; ax = 55
+    43 00000068 6619D8                  	sbb    ax,      bx       ; ax = 55 - b
+    44 0000006B 668B1C25[00000000]      	mov    bx,      [usia]   ; bx = a
+    45 00000073 6611D8                  	adc    ax,      bx       ; ax = 55 - b + a
+    46 00000076 66890425[00000000]      	mov    [Num],   ax       ; Num = 55 - b + a
+    47                                  
+    48                                  	; denominator
+    49 0000007E 66B8A8FF                	mov    ax,      -88      ; ax = -88
+    50 00000082 6699                    	cwd                      ; ax:dx = -88
+    51 00000084 668B1C25[00000000]      	mov    bx,      [usic]   ; bx = c
+    52 0000008C 66F7FB                  	idiv   bx                ; ax = -88 / c
+    53 0000008F 66FFC0                  	inc    ax                ; ax = -88 / c + 1
+    54 00000092 66890425[00000000]      	mov    [Den],   ax       ; Den = ax = -88 / c + 1   
+    55                                  
+    56                                  	; result
+    57 0000009A 668B0425[00000000]      	mov    ax,      [Num]    ; ax = 55 - b + a
+    58 000000A2 6699                    	cwd			 ; ax:dx = 55 - b + a
+    59 000000A4 668B1C25[00000000]      	mov    bx,      [Den]    ; bx = -88 / c + 1
+    60 000000AC 66F7FB                  	idiv   bx		 ; ax = num / den
+    61 000000AF 66890425[00000000]      	mov    [Res],   ax       ; Res = ax = Num / Den
+    62 000000B7 C3                      ret
+    63                                  
+    64                                  asm_signed_char:
+    65                                  	; numerator
+    66 000000B8 8A0425[00000000]        	mov    al,      [scb]    ; al = b
+    67 000000BF 6698                    	cbw                      ; ax = b
+    68 000000C1 6689C3                  	mov    bx,      ax       ; bx = b 
+    69 000000C4 66B83700                	mov    ax,      55       ; ax = 55
+    70 000000C8 6629D8                  	sub    ax,      bx       ; ax = 55 - b
+    71 000000CB 6689C3                  	mov    bx,      ax       ; bx = 55 - b
+    72 000000CE 8A0425[00000000]        	mov    al,      [sca]    ; al = a
+    73 000000D5 6698                    	cbw			 ; ax = a
+    74 000000D7 6601C3                  	add    bx,      ax       ; ax = 55 - b + a
+    75 000000DA 66890425[00000000]      	mov    [Num],   ax       ; Num = ax
+    76                                  
+    77                                  	; denominator
+    78                                  
+    79                                  	; result
+    80 000000E2 C3                      ret
+    81                                  
