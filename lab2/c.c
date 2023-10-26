@@ -5,7 +5,8 @@ extern void asm_func(void);
 
 
 int16_t ia, ib;
-uint16_t wa, wb, wres;
+uint16_t wa, wb;
+uint32_t wres, var;
 
 void C_func(uint16_t a, uint16_t b) {
 	if (a == b){
@@ -28,7 +29,7 @@ main(int argc, char *argv[]) {
 	printf("b = ");
   	scanf("%d", &wb);
 
-	C_func(wa, wb);
+	//C_func(wa, wb);
 	asm_func();
 	printf("%u\n", wres);
 

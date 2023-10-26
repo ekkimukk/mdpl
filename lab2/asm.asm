@@ -2,7 +2,7 @@ section .data
 	extern ia,   wa
 	extern ib,   wb
 	extern ires, wres
-
+	extern var
 section .text
 	global asm_func
 
@@ -27,15 +27,19 @@ asm_func:
 	@a_lower_than_b:
 	mul    ax             ; ax:dx = ax * ax
 	div    bx             ;
-	mov    [wres], ax     ; 
+	mov    [wres], ax     ;
 	ret
 
 	@a_higher_than_b:
-	; нужно расширить ax:dx до eax:edx, 
-	; чтобы результат умножения помещался
-	mul    bx
-	; вот тут нужно расширить до eax:edx
-	mov    cx,     11
+	xor    eax,    eax
+	xor    ebx,    ebx
+	xor    edx,    edx
+	mov    ax,    [wa]   ; eax = a
+	;cdq                   ; eax:edx = a
+	mov    bx,    [wb]   ; ebx = b
+	mul    bx             ; eax:edx = a*b
+	mov    [var],  ax
+	mov    cx,    11 
 	div    cx
 	mov    [wres], eax      
 	ret
