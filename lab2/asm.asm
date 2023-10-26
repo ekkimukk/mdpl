@@ -31,7 +31,7 @@ asm_func:
 	ret
 
 	@a_higher_than_b:
-	; нужно расширить dx:ax до eax:edx, 
+	; нужно расширить ax:dx до eax:edx, 
 	; чтобы результат умножения помещался
 	mul    bx
 	; вот тут нужно расширить до eax:edx
