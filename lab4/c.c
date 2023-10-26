@@ -33,7 +33,7 @@ main(int argc, char *argv[]) {
 		scanf("%d", &A[i]);
 	}
 
-	printf("%d\n", c_func(c, d));
+	//printf("%d\n", c_func(c, d));
 	asm_func();
 
 
