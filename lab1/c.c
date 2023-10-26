@@ -6,7 +6,8 @@ extern void asm_unsigned_int(void);
 extern void asm_signed_char(void);
 extern void asm_unsigned_char(void);
 
-int32_t Num, Den, Res;
+int32_t Num, Res;
+int16_t Den;
 int16_t sia, sib, sic; // signed_int
 uint16_t usia, usib, usic; // unsigned_int
 int8_t sca, scb, scc; // signed_char
@@ -35,9 +36,10 @@ void usiC(uint16_t usia, uint16_t usib, uint16_t usic) {
 	Num = 55 - usib + usia;
 	Den = (-88 / usic) + 1;
 	Res = (Num / Den);
-	printf("%d\n", Num);
-	printf("%d\n", Den);
-	printf("%d\n", Res);
+	printf("---C part---\n");
+	printf("Num = %d\n", Num);
+	printf("Den = %d\n", Den);
+	printf("Res = %d\n", Res);
 }
 
 void usiASM(uint16_t usia, uint16_t usib, uint16_t usic) {
@@ -84,6 +86,7 @@ main(int argc, char *argv[]) {
 	// ---------------
 */	
 	// Unsigned Int (0<->65535)
+	printf("---Input---\n");
 	printf("usia = ");
 	scanf("%u", &usia);
 
@@ -92,12 +95,17 @@ main(int argc, char *argv[]) {
 
 	printf("usic = ");
 	scanf("%u", &usic);
+	if ( usic == 0) {
+		printf("error; c = 0");
+		return 0;
+	}
 
+	usiC(usia, usib, usic);
 	usiASM(usia, usib, usic);
-	printf("%d\n", Num);
-	printf("%d\n", Den);
-	printf("%d\n", Res);
-	//usiC(usia, usib, usic);
+	printf("---ASM part---\n");
+	printf("Num = %d\n", Num);
+	printf("Den = %d\n", Den);
+	printf("Res = %d\n", Res);
 	// ---------------
 	/*
 	// Signed Char (-128<->127)
@@ -110,11 +118,11 @@ main(int argc, char *argv[]) {
 	printf("scc = ");
 	scanf("%d", &scc);
 
+	scC(sca, scb, scc);
 	scASM(sca, scb, scc);
 	printf("%d\n", Num);
 	printf("%d\n", Den);
 	printf("%d\n", Res);
-	scC(sca, scb, scc);
 	// ---------------
 	*/
 

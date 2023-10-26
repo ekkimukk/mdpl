@@ -1,5 +1,5 @@
 section .data
-	extern Num  , Den  , Res
+	extern Num  , Den  , Res , var
 	extern sia  , sib  , sic
 	extern usia , usib , usic
 	extern sca  , scb  , scc
@@ -47,19 +47,13 @@ asm_unsigned_int:
 	; numerator
 	mov    bx,      [usib]   ; bx = b
 	mov    ax,      55	 ; ax = 55
-	sub    ax,      bx       ; ax = 55 - b
+	sub    eax,      ebx       ; ax = 55 - b
 	mov    bx,      [usia]   ; bx = a
-	;расширение 	
-	cwd			 ; ax:dx
-	mov    cx,      ax
-	mov    ax,      dx
-	shl    eax,     16
-	add    ax,      cx
-
 	add    eax,     ebx      ; ax = 55 - b + a
 	mov    [Num],   eax      ; Num = 55 - b + a
 
 	; denominator
+	xor    eax,     eax
 	mov    ax,      -88      ; ax = -88
 	cwd                      ; ax:dx = -88
 	mov    bx,      [usic]   ; bx = c
@@ -68,11 +62,13 @@ asm_unsigned_int:
 	mov    [Den],   ax       ; Den = ax = -88 / c + 1   
 
 	; result
+	xor    eax,     eax
+	xor    ebx,     ebx
 	mov    ax,      [Num]    ; ax = 55 - b + a
-	cwd			 ; ax:dx = 55 - b + a
+	mov    dx,      [Num+2]  
 	mov    bx,      [Den]    ; bx = -88 / c + 1
 	idiv   bx		 ; ax = num / den
-	mov    [Res],   ax       ; Res = ax = Num / Den
+	mov    [Res],   ax      ; Res = ax = Num / Den
 ret
 
 asm_signed_char:
