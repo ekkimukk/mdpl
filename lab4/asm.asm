@@ -10,12 +10,12 @@ asm_func:
 	xor      ecx,     ecx      ;    \/
 	xor      edx,     edx      ; cleaning
 
-	mov      bx,      [n]      ; bx = n
-	mov      cx,      0        ; cx = i = 0
+	mov      bx,     [n]       ; bx = n
+	mov      cx,     0         ; cx = i = 0
 	@cycle:
-	cmp      cx,      bx       ; if i==n {
+	cmp      cx,     bx        ; if i==n {
 	je       @end              ; exit } else {
-	mov      ax,      [A+ecx]  ; ax = A[i]
+	mov      ax,     [A+ecx*2] ; ax = A[i]
 	@first_condition:
 	mov      dx,      [c]      ; dx = c
 	cmp      ax,      dx       ; if A[i]>=c {

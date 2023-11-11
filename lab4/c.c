@@ -10,7 +10,9 @@ uint16_t c, d;
 uint16_t asm_count = 0;
 
 
-int c_func(uint16_t c, uint16_t d) {
+int 
+c_func(uint16_t c, uint16_t d) 
+{
 	int count = 0;
 	for (int i = 0; i < n; ++i) {
 		if ((A[i] >= c) && (A[i] <= d)) { count++; }
@@ -19,7 +21,8 @@ int c_func(uint16_t c, uint16_t d) {
 }
 
 int
-main(int argc, char *argv[]) {
+main(int argc, char *argv[]) 
+{
 	// Найти сколько положительных элементов 
 	// массива A={a[i]} удовлетворяет условию
 	// с <= a[i] <= d 
@@ -33,6 +36,7 @@ main(int argc, char *argv[]) {
 		printf("A[%d] = ", i);
 		scanf("%d", &A[i]);
 	}
+
 	printf(" C >>>");
 	printf("%d\n", c_func(c, d));
 
