@@ -10,32 +10,38 @@
     10 00000004 31C9                    	xor      ecx,     ecx      ;    \/
     11 00000006 31D2                    	xor      edx,     edx      ; cleaning
     12                                  
-    13 00000008 668B1C25[00000000]      	mov      bx,     [n]       ; bx = n
-    14 00000010 66B90000                	mov      cx,     0         ; cx = i = 0
+    13 00000008 668B1C25[00000000]      	mov      bx,      [n]       ; bx = n
+    14 00000010 66B90000                	mov      cx,      0         ; cx = i = 0
     15                                  	@cycle:
-    16 00000014 6639D9                  	cmp      cx,     bx        ; if i==n {
-    17 00000017 7446                    	je       @end              ; exit } else {
-    18 00000019 66678B8409-             	mov      ax,     [A+ecx*2] ; ax = A[i]
+    16 00000014 6639D9                  	cmp      cx,      bx        ; if i==n {
+    17 00000017 7454                    	je       @end               ; exit } else {
+    18 00000019 66678B8409-             	mov      ax,      [A+ecx*2] ; ax = A[i]
     18 0000001E [00000000]         
     19                                  	@first_condition:
-    20 00000022 668B1425[00000000]      	mov      dx,      [c]      ; dx = c
-    21 0000002A 6639D0                  	cmp      ax,      dx       ; if A[i]>=c {
-    22 0000002D 7305                    	jae      @second_condition ; go to second } else {
-    23 0000002F 66FFC1                  	inc      cx                ; i++
-    24 00000032 EBE0                    	jmp      @cycle            ; go to beggining }
+    20 00000022 66BA0000                	mov      dx,      0
+    21 00000026 6639D0                  	cmp      ax,      dx
+    22 00000029 7D05                    	jnl      @second_condition
+    23 0000002B 66FFC1                  	inc      cx
+    24 0000002E EBE4                    	jmp      @cycle
     25                                  	@second_condition:
-    26 00000034 668B1425[00000000]      	mov      dx,      [d]      ; dx = d
-    27 0000003C 6639D0                  	cmp      ax,      dx       ; if A[i]<=d {
-    28 0000003F 7605                    	jbe      @conditions_met   ; go to met } else {
-    29 00000041 66FFC1                  	inc      cx                ; i++
-    30 00000044 EBCE                    	jmp      @cycle            ; go to beggining }
-    31                                  	@conditions_met:
-    32 00000046 31C0                    	xor      eax,     eax
-    33 00000048 8B0425[00000000]        	mov      eax,     [asm_count] ; ax = asm_count
-    34 0000004F FFC0                    	inc      eax               ; ax++
-    35 00000051 890425[00000000]        	mov      [asm_count], eax  ; asm_count = ax
-    36 00000058 31C0                    	xor      eax,     eax
-    37 0000005A 66FFC1                  	inc      cx                ; i++
-    38 0000005D EBB5                    	jmp      @cycle            ; go to beggining
-    39                                  @end:
-    40 0000005F C3                      ret
+    26 00000030 668B1425[00000000]      	mov      dx,      [c]      ; dx = c
+    27 00000038 6639D0                  	cmp      ax,      dx       ; if A[i]>=c {
+    28 0000003B 7D05                    	jnl      @third_condition  ; go to second } else {
+    29 0000003D 66FFC1                  	inc      cx                ; i++
+    30 00000040 EBD2                    	jmp      @cycle            ; go to beggining }
+    31                                  	@third_condition:
+    32 00000042 668B1425[00000000]      	mov      dx,      [d]      ; dx = d
+    33 0000004A 6639D0                  	cmp      ax,      dx       ; if A[i]<=d {
+    34 0000004D 7E05                    	jng      @conditions_met   ; go to met } else {
+    35 0000004F 66FFC1                  	inc      cx                ; i++
+    36 00000052 EBC0                    	jmp      @cycle            ; go to beggining }
+    37                                  	@conditions_met:
+    38 00000054 31C0                    	xor      eax,     eax
+    39 00000056 8B0425[00000000]        	mov      eax,     [asm_count] ; ax = asm_count
+    40 0000005D FFC0                    	inc      eax               ; ax++
+    41 0000005F 890425[00000000]        	mov      [asm_count], eax  ; asm_count = ax
+    42 00000066 31C0                    	xor      eax,     eax
+    43 00000068 66FFC1                  	inc      cx                ; i++
+    44 0000006B EBA7                    	jmp      @cycle            ; go to beggining
+    45                                  @end:
+    46 0000006D C3                      ret

@@ -10,22 +10,28 @@ asm_func:
 	xor      ecx,     ecx      ;    \/
 	xor      edx,     edx      ; cleaning
 
-	mov      bx,     [n]       ; bx = n
-	mov      cx,     0         ; cx = i = 0
+	mov      bx,      [n]       ; bx = n
+	mov      cx,      0         ; cx = i = 0
 	@cycle:
-	cmp      cx,     bx        ; if i==n {
-	je       @end              ; exit } else {
-	mov      ax,     [A+ecx*2] ; ax = A[i]
+	cmp      cx,      bx        ; if i==n {
+	je       @end               ; exit } else {
+	mov      ax,      [A+ecx*2] ; ax = A[i]
 	@first_condition:
+	mov      dx,      0
+	cmp      ax,      dx
+	jnl      @second_condition
+	inc      cx
+	jmp      @cycle
+	@second_condition:
 	mov      dx,      [c]      ; dx = c
 	cmp      ax,      dx       ; if A[i]>=c {
-	jae      @second_condition ; go to second } else {
+	jnl      @third_condition  ; go to second } else {
 	inc      cx                ; i++
 	jmp      @cycle            ; go to beggining }
-	@second_condition:
+	@third_condition:
 	mov      dx,      [d]      ; dx = d
 	cmp      ax,      dx       ; if A[i]<=d {
-	jbe      @conditions_met   ; go to met } else {
+	jng      @conditions_met   ; go to met } else {
 	inc      cx                ; i++
 	jmp      @cycle            ; go to beggining }
 	@conditions_met:

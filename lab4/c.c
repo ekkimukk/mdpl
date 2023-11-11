@@ -15,7 +15,9 @@ c_func(int16_t c, int16_t d)
 {
 	int count = 0;
 	for (int i = 0; i < n; ++i) {
-		if ((A[i] >= c) && (A[i] <= d)) { count++; }
+		if ((A[i] >= 0) && (A[i] >= c) && (A[i] <= d)) {
+		    count++; 
+		}
 	}
 	return count;
 }
