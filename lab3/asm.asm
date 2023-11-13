@@ -1,84 +1,100 @@
 section .data
-	extern ia,   wa
-	extern ib,   wb
-	extern ires, wres
-	extern var
+	extern a, b, res
+
+	msg_1     db        'Input values', 0xa, 0
+	len_1     equ       $ - msg_1
+
+	msg_a     db        'a = ', 0
+	len_a     equ       $ - msg_a
+
+	msg_b     db        'b = ', 0
+	len_b     equ       $ - msg_b
+
+	len_inp   db        7
+	buffer times 12 db 0
+
+
 section .text
-	global uint_asm_func
+	global asm_input
 	global int_asm_func
 
+;    |___INPUT___|  
+;    ||         ||
+;    ||         ||
+;   \  /       \  /
+;    \/         \/
+asm_input:
+	xor       eax,      eax     ;    \/
+	xor       ebx,      ebx     ;    \/
+	xor       ecx,      ecx     ;    \/
+	xor       edx,      edx     ; cleaning
 
-uint_asm_func:
-	xor    eax,    eax 
-	xor    ebx,    ebx 
-	xor    ecx,    ecx 
-	xor    edx,    edx 
+	; "Input values"
+	mov       edx,      len_1   ;
+	mov       ecx,      msg_1   ;
+	call      write
 
-	mov    ax,     [wa]   ; ax = wa
-	mov    bx,     [wb]   ; bx = wb
-	cmp    ax,     bx     ; ax==bx?
-	je     @a_is_b
-	jb     @a_lower_than_b
-	ja     @a_higher_than_b
+	; a = _
+	mov       edx,      len_a
+	mov       ecx,      msg_a
+	call      write
 
-	@a_is_b:
-	mov    eax,    11     ; eax = 11
-	mov    [wres], eax    ; wres = 11
+	; reading a
+	mov       edx,      len_inp
+	mov       ecx,      buffer
+	call      read
+	call      to_int
+
+	; b = _
+	;mov       edx,      len_b
+	;mov       ecx,      msg_b
+	;call      write
+
+	; reading b
+	;mov       edx,      len_inp
+	;mov       ecx,      buffer
+	;call      read
+ret  
+
+
+;    |_FUNCTIONS_|  
+;    ||         ||
+;    ||         ||
+;   \  /       \  /
+;    \/         \/
+write:
+	mov       ebx,      1
+	mov       eax,      4
+	int 80h
+ret
+
+read:
+	mov       ebx,      1
+	mov       eax,      3
+	int 80h
+ret
+
+to_int:
+	xor       eax,      eax     ;    \/
+	xor       ebx,      ebx     ;    \/
+	xor       ecx,      ecx     ;    \/
+	xor       edx,      edx     ; cleaning
+
+	;mov       ax,       [buffer+0]
+	;cmp       ax,       '-'
+
+	cycle:
+	cmp       ecx,      2
+	je        exit
+	mov       dl,       [buffer+ecx]
+	sub       dl,       48
+	mov       [b],      dx
 	ret
-
-	@a_lower_than_b:
-	mul    ax             ; ax:dx = ax * ax
-	div    bx             ; 
-	mov    [wres], ax     ;
-	ret
-
-	@a_higher_than_b:
-	xor    eax,   eax
-	xor    ebx,   ebx
-	mov    ax,    [wa]   ; eax = a
-	mov    bx,    [wb]   ; ebx = b
-	mul    ebx           ; eax:edx = a*b
-
-	mov    ecx,    11    ; ecx = 11
-	div    ecx           ; eax:edx / eax
-
-	mov    [wres], eax   ; wres = eax
-	ret
+	inc       ecx
+	jmp       cycle
+	exit:
+ret
 
 
-int_asm_func:
-	xor    eax,    eax 
-	xor    ebx,    ebx 
-	xor    ecx,    ecx 
-	xor    edx,    edx 
-
-	mov    ax,     [ia]   ; ax = wa
-	mov    bx,     [ib]   ; bx = wb
-	cmp    ax,     bx     ; ax==bx?
-	je     @a_is_b_int
-	jb     @a_lower_than_b_int
-	ja     @a_higher_than_b_int
-
-	@a_is_b_int:
-	mov    eax,    11     ; eax = 11
-	mov    [ires], eax    ; wres = 11
-	ret
-
-	@a_lower_than_b_int:
-	imul   ax             ; ax:dx = ax * ax
-	idiv   bx             ; 
-	mov    [ires], ax     ;
-	ret
-
-	@a_higher_than_b_int:
-	xor    eax,   eax
-	xor    ebx,   ebx
-	mov    ax,    [ia]   ; eax = a
-	mov    bx,    [ib]   ; ebx = b
-	imul   ebx           ; eax:edx = a*b
-
-	mov    ecx,    11    ; ecx = 11
-	idiv   ecx           ; eax:edx / eax
-
-	mov    [ires], eax   ; wres = eax
-	ret
+to_sign_int:
+ret

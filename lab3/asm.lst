@@ -1,84 +1,101 @@
      1                                  section .data
-     2                                  	extern ia,   wa
-     3                                  	extern ib,   wb
-     4                                  	extern ires, wres
-     5                                  	extern var
-     6                                  section .text
-     7                                  	global uint_asm_func
-     8                                  	global int_asm_func
+     2                                  	extern a, b, res
+     3                                  
+     4 00000000 496E7075742076616C-     	msg_1     db        'Input values', 0xa, 0
+     4 00000009 7565730A00         
+     5                                  	len_1     equ       $ - msg_1
+     6                                  
+     7 0000000E 61203D2000              	msg_a     db        'a = ', 0
+     8                                  	len_a     equ       $ - msg_a
      9                                  
-    10                                  
-    11                                  uint_asm_func:
-    12 00000000 31C0                    	xor    eax,    eax 
-    13 00000002 31DB                    	xor    ebx,    ebx 
-    14 00000004 31C9                    	xor    ecx,    ecx 
-    15 00000006 31D2                    	xor    edx,    edx 
+    10 00000013 62203D2000              	msg_b     db        'b = ', 0
+    11                                  	len_b     equ       $ - msg_b
+    12                                  
+    13 00000018 07                      	len_inp   db        7
+    14 00000019 00<rep Ch>              	buffer times 12 db 0
+    15                                  
     16                                  
-    17 00000008 668B0425[00000000]      	mov    ax,     [wa]   ; ax = wa
-    18 00000010 668B1C25[00000000]      	mov    bx,     [wb]   ; bx = wb
-    19 00000018 6639D8                  	cmp    ax,     bx     ; ax==bx?
-    20 0000001B 7404                    	je     @a_is_b
-    21 0000001D 720F                    	jb     @a_lower_than_b
-    22 0000001F 771C                    	ja     @a_higher_than_b
-    23                                  
-    24                                  	@a_is_b:
-    25 00000021 B80B000000              	mov    eax,    11     ; eax = 11
-    26 00000026 890425[00000000]        	mov    [wres], eax    ; wres = 11
-    27 0000002D C3                      	ret
-    28                                  
-    29                                  	@a_lower_than_b:
-    30 0000002E 66F7E0                  	mul    ax             ; ax:dx = ax * ax
-    31 00000031 66F7F3                  	div    bx             ; 
-    32 00000034 66890425[00000000]      	mov    [wres], ax     ;
-    33 0000003C C3                      	ret
-    34                                  
-    35                                  	@a_higher_than_b:
-    36 0000003D 31C0                    	xor    eax,   eax
-    37 0000003F 31DB                    	xor    ebx,   ebx
-    38 00000041 668B0425[00000000]      	mov    ax,    [wa]   ; eax = a
-    39 00000049 668B1C25[00000000]      	mov    bx,    [wb]   ; ebx = b
-    40 00000051 F7E3                    	mul    ebx           ; eax:edx = a*b
+    17                                  section .text
+    18                                  	global asm_input
+    19                                  	global int_asm_func
+    20                                  
+    21                                  ;    |___INPUT___|  
+    22                                  ;    ||         ||
+    23                                  ;    ||         ||
+    24                                  ;   \  /       \  /
+    25                                  ;    \/         \/
+    26                                  asm_input:
+    27 00000000 31C0                    	xor       eax,      eax     ;    \/
+    28 00000002 31DB                    	xor       ebx,      ebx     ;    \/
+    29 00000004 31C9                    	xor       ecx,      ecx     ;    \/
+    30 00000006 31D2                    	xor       edx,      edx     ; cleaning
+    31                                  
+    32                                  	; "Input values"
+    33 00000008 BA0E000000              	mov       edx,      len_1   ;
+    34 0000000D B9[00000000]            	mov       ecx,      msg_1   ;
+    35 00000012 E824000000              	call      write
+    36                                  
+    37                                  	; a = _
+    38 00000017 BA05000000              	mov       edx,      len_a
+    39 0000001C B9[0E000000]            	mov       ecx,      msg_a
+    40 00000021 E815000000              	call      write
     41                                  
-    42 00000053 B90B000000              	mov    ecx,    11    ; ecx = 11
-    43 00000058 F7F1                    	div    ecx           ; eax:edx / eax
-    44                                  
-    45 0000005A 890425[00000000]        	mov    [wres], eax   ; wres = eax
-    46 00000061 C3                      	ret
+    42                                  	; reading a
+    43 00000026 BA[18000000]            	mov       edx,      len_inp
+    44 0000002B B9[19000000]            	mov       ecx,      buffer
+    45 00000030 E813000000              	call      read
+    46 00000035 E81B000000              	call      to_int
     47                                  
-    48                                  
-    49                                  int_asm_func:
-    50 00000062 31C0                    	xor    eax,    eax 
-    51 00000064 31DB                    	xor    ebx,    ebx 
-    52 00000066 31C9                    	xor    ecx,    ecx 
-    53 00000068 31D2                    	xor    edx,    edx 
-    54                                  
-    55 0000006A 668B0425[00000000]      	mov    ax,     [ia]   ; ax = wa
-    56 00000072 668B1C25[00000000]      	mov    bx,     [ib]   ; bx = wb
-    57 0000007A 6639D8                  	cmp    ax,     bx     ; ax==bx?
-    58 0000007D 7404                    	je     @a_is_b_int
-    59 0000007F 720F                    	jb     @a_lower_than_b_int
-    60 00000081 771C                    	ja     @a_higher_than_b_int
-    61                                  
-    62                                  	@a_is_b_int:
-    63 00000083 B80B000000              	mov    eax,    11     ; eax = 11
-    64 00000088 890425[00000000]        	mov    [ires], eax    ; wres = 11
-    65 0000008F C3                      	ret
-    66                                  
-    67                                  	@a_lower_than_b_int:
-    68 00000090 66F7E8                  	imul   ax             ; ax:dx = ax * ax
-    69 00000093 66F7FB                  	idiv   bx             ; 
-    70 00000096 66890425[00000000]      	mov    [ires], ax     ;
-    71 0000009E C3                      	ret
-    72                                  
-    73                                  	@a_higher_than_b_int:
-    74 0000009F 31C0                    	xor    eax,   eax
-    75 000000A1 31DB                    	xor    ebx,   ebx
-    76 000000A3 668B0425[00000000]      	mov    ax,    [ia]   ; eax = a
-    77 000000AB 668B1C25[00000000]      	mov    bx,    [ib]   ; ebx = b
-    78 000000B3 F7EB                    	imul   ebx           ; eax:edx = a*b
-    79                                  
-    80 000000B5 B90B000000              	mov    ecx,    11    ; ecx = 11
-    81 000000BA F7F9                    	idiv   ecx           ; eax:edx / eax
+    48                                  	; b = _
+    49                                  	;mov       edx,      len_b
+    50                                  	;mov       ecx,      msg_b
+    51                                  	;call      write
+    52                                  
+    53                                  	; reading b
+    54                                  	;mov       edx,      len_inp
+    55                                  	;mov       ecx,      buffer
+    56                                  	;call      read
+    57 0000003A C3                      ret  
+    58                                  
+    59                                  
+    60                                  ;    |_FUNCTIONS_|  
+    61                                  ;    ||         ||
+    62                                  ;    ||         ||
+    63                                  ;   \  /       \  /
+    64                                  ;    \/         \/
+    65                                  write:
+    66 0000003B BB01000000              	mov       ebx,      1
+    67 00000040 B804000000              	mov       eax,      4
+    68 00000045 CD80                    	int 80h
+    69 00000047 C3                      ret
+    70                                  
+    71                                  read:
+    72 00000048 BB01000000              	mov       ebx,      1
+    73 0000004D B803000000              	mov       eax,      3
+    74 00000052 CD80                    	int 80h
+    75 00000054 C3                      ret
+    76                                  
+    77                                  to_int:
+    78 00000055 31C0                    	xor       eax,      eax     ;    \/
+    79 00000057 31DB                    	xor       ebx,      ebx     ;    \/
+    80 00000059 31C9                    	xor       ecx,      ecx     ;    \/
+    81 0000005B 31D2                    	xor       edx,      edx     ; cleaning
     82                                  
-    83 000000BC 890425[00000000]        	mov    [ires], eax   ; wres = eax
-    84 000000C3 C3                      	ret
+    83                                  	;mov       ax,       [buffer+0]
+    84                                  	;cmp       ax,       '-'
+    85                                  
+    86                                  	cycle:
+    87 0000005D 83F902                  	cmp       ecx,      2
+    88 00000060 7417                    	je        exit
+    89 00000062 678A91[19000000]        	mov       dl,       [buffer+ecx]
+    90 00000069 80EA30                  	sub       dl,       48
+    91 0000006C 66891425[00000000]      	mov       [b],      dx
+    92 00000074 C3                      	ret
+    93 00000075 FFC1                    	inc       ecx
+    94 00000077 EBE4                    	jmp       cycle
+    95                                  	exit:
+    96 00000079 C3                      ret
+    97                                  
+    98                                  
+    99                                  to_sign_int:
+   100 0000007A C3                      ret
