@@ -1,102 +1,26 @@
 section .data
 	extern a   , b   , c
 	extern Num , Den , Res
+	var55   dd   55.0
+	var88   dd   -88.0
+	var1    dd   1.0
 
 section .text
 	global asm_func
 
-asm_signed_int:
+asm_func:
+	finit
 	; numerator
-	mov    bx,      [sib]    ; bx = b
-	mov    ax,      55	 ; ax = 55
-	sub    ax,      bx       ; ax = 55 - b
-	mov    bx,      [sia]    ; bx = a
-	add    ax,      bx       ; ax = 55 - b + a
-	mov    [Num],   ax       ; Num = 55 - b + a
+	fld      dword    [var55]  ; st(0) = 55
+	fsub     dword    [b]      ; st(0) = 55 - b
+	fadd     dword    [a]      ; st(0) = a + (55 - b)
+	fst      dword    [Num]
 
-    	; denominator
-	mov    ax,      -88      ; ax = -88
-	cwd			 ; ax:dx = -88
-	mov    bx,      [sic]    ; bx = c
-	idiv   bx                ; ax = -88 / c
-	inc    ax                ; ax = -88 / c + 1
-	mov    [Den],   ax       ; Den = 55 / c + 1
+	fld      dword    [var88]  ;
+	fdiv     dword    [c]      ;
+	fadd     dword    [var1]   ;
+	fst      dword    [Den]    ;
 
-	; result
-	mov    ax,      [Num]    ; ax = 55 - b + a
-	cwd			 ; ax:dx = 55 - b + a
-	mov    bx,      [Den]    ; bx = -88 / c + 1
-	idiv   bx		 ; ax = num / den
-	mov    [Res],   ax       ; Res = ax = Num / Den
+	fdivr    dword    [Num]    ;
+	fst      dword    [Res]    ;
 ret
-
-asm_unsigned_int:
-
-	; cleaning
-	xor    eax,     eax
-	xor    ebx,     ebx
-	xor    ecx,     ecx
-	xor    edx,     edx
-
-	; numerator
-	mov    bx,      [usib]   ; bx = b
-	mov    ax,      55	 ; ax = 55
-	sub    eax,      ebx       ; ax = 55 - b
-	mov    bx,      [usia]   ; bx = a
-	add    eax,     ebx      ; ax = 55 - b + a
-	mov    [Num],   eax      ; Num = 55 - b + a
-
-	; denominator
-	xor    eax,     eax
-	mov    ax,      -88      ; ax = -88
-	cwd                      ; ax:dx = -88
-	mov    bx,      [usic]   ; bx = c
-	idiv   bx                ; ax = -88 / c
-	inc    ax                ; ax = -88 / c + 1
-	mov    [Den],   ax       ; Den = ax = -88 / c + 1   
-
-	; result
-	xor    eax,     eax
-	xor    ebx,     ebx
-	mov    ax,      [Num]    ; ax = 55 - b + a
-	mov    dx,      [Num+2]  
-	mov    bx,      [Den]    ; bx = -88 / c + 1
-	idiv   bx		 ; ax = num / den
-	mov    [Res],   ax      ; Res = ax = Num / Den
-ret
-
-asm_signed_char:
-	
-	; cleaning
-	xor    eax,     eax
-	xor    ebx,     ebx
-	xor    ecx,     ecx
-	xor    edx,     edx
-
-	; numerator
-	mov    al,   byte   [sca]    ; al = a
-	cbw
-	mov    bx,      ax       ; bx = a
-	mov    ax,      55       ; ax = 55
-	add    bx,      ax       ; ax = 55 + a
-	mov    al,   byte   [scb]    ; al = b
-	cbw
-	sub    bx,      ax       ; ax = 55 - b + a
-	mov    [Num],   bx       ; Num = ax
-
-	; denominator
-	mov    ax,      -88      ; ax = -88
-	mov    bl,      [scc]    ; bx = c
-	idiv   bl
-	cbw
-	inc    ax                ; ax = -88 / c + 1
-	mov    [Den],   ax       ; Den = ax = -88 / c + 1   
-
-	; result
-	mov    ax,      [Num]    ; ax = 55 - b + a
-	cwd			 ; ax:dx = 55 - b + a
-	mov    bx,      [Den]    ; bx = -88 / c + 1
-	idiv   bx		 ; ax = num / den
-	mov    [Res],   ax       ; Res = ax = Num / Den
-ret
-

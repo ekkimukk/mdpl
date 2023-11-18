@@ -1,0 +1,26 @@
+     1                                  section .data
+     2                                  	extern a   , b   , c
+     3                                  	extern Num , Den , Res
+     4 00000000 00005C42                	var55   dd   55.0
+     5 00000004 0000B0C2                	var88   dd   -88.0
+     6 00000008 0000803F                	var1    dd   1.0
+     7                                  
+     8                                  section .text
+     9                                  	global asm_func
+    10                                  
+    11                                  asm_func:
+    12 00000000 9BDBE3                  	finit
+    13                                  	; numerator
+    14 00000003 D90425[00000000]        	fld      dword    [var55]  ; st(0) = 55
+    15 0000000A D82425[00000000]        	fsub     dword    [b]      ; st(0) = 55 - b
+    16 00000011 D80425[00000000]        	fadd     dword    [a]      ; st(0) = a + (55 - b)
+    17 00000018 D91425[00000000]        	fst      dword    [Num]
+    18                                  
+    19 0000001F D90425[04000000]        	fld      dword    [var88]  ;
+    20 00000026 D83425[00000000]        	fdiv     dword    [c]      ;
+    21 0000002D D80425[08000000]        	fadd     dword    [var1]   ;
+    22 00000034 D91425[00000000]        	fst      dword    [Den]    ;
+    23                                  
+    24 0000003B D83C25[00000000]        	fdivr    dword    [Num]    ;
+    25 00000042 D91425[00000000]        	fst      dword    [Res]    ;
+    26 00000049 C3                      ret
