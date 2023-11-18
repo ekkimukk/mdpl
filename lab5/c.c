@@ -3,7 +3,8 @@
 #include <stdint.h>
 extern void asm_func(void);
 
-float a, b, c;
+float a, b;
+int16_t c;
 float Num, Den, Res;
 
 void 
@@ -32,7 +33,7 @@ main(int argc, char *argv[])
 	scanf("%f", &b);
 
 	//printf("c = ");
-	scanf("%f", &c);
+	scanf("%d", &c);
 	if (c == 0) {
 		printf("error; c = 0\n");
 		return 0;

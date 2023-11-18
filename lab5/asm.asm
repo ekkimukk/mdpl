@@ -15,12 +15,12 @@ asm_func:
 	fsub     dword    [b]      ; st(0) = 55 - b
 	fadd     dword    [a]      ; st(0) = a + (55 - b)
 	fst      dword    [Num]
-
+	; denominator
 	fld      dword    [var88]  ;
-	fdiv     dword    [c]      ;
+	fidiv    dword    [c]      ;
 	fadd     dword    [var1]   ;
 	fst      dword    [Den]    ;
-
+	; result
 	fdivr    dword    [Num]    ;
 	fst      dword    [Res]    ;
 ret

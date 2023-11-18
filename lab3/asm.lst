@@ -1,0 +1,84 @@
+     1                                  section .data
+     2                                  	extern ia,   wa
+     3                                  	extern ib,   wb
+     4                                  	extern ires, wres
+     5                                  	extern var
+     6                                  section .text
+     7                                  	global uint_asm_func
+     8                                  	global int_asm_func
+     9                                  
+    10                                  
+    11                                  uint_asm_func:
+    12 00000000 31C0                    	xor    eax,    eax 
+    13 00000002 31DB                    	xor    ebx,    ebx 
+    14 00000004 31C9                    	xor    ecx,    ecx 
+    15 00000006 31D2                    	xor    edx,    edx 
+    16                                  
+    17 00000008 668B0425[00000000]      	mov    ax,     [wa]   ; ax = wa
+    18 00000010 668B1C25[00000000]      	mov    bx,     [wb]   ; bx = wb
+    19 00000018 6639D8                  	cmp    ax,     bx     ; ax==bx?
+    20 0000001B 7404                    	je     @a_is_b
+    21 0000001D 720F                    	jb     @a_lower_than_b
+    22 0000001F 771C                    	ja     @a_higher_than_b
+    23                                  
+    24                                  	@a_is_b:
+    25 00000021 B80B000000              	mov    eax,    11     ; eax = 11
+    26 00000026 890425[00000000]        	mov    [wres], eax    ; wres = 11
+    27 0000002D C3                      	ret
+    28                                  
+    29                                  	@a_lower_than_b:
+    30 0000002E 66F7E0                  	mul    ax             ; ax:dx = ax * ax
+    31 00000031 66F7F3                  	div    bx             ; 
+    32 00000034 66890425[00000000]      	mov    [wres], ax     ;
+    33 0000003C C3                      	ret
+    34                                  
+    35                                  	@a_higher_than_b:
+    36 0000003D 31C0                    	xor    eax,   eax
+    37 0000003F 31DB                    	xor    ebx,   ebx
+    38 00000041 668B0425[00000000]      	mov    ax,    [wa]   ; eax = a
+    39 00000049 668B1C25[00000000]      	mov    bx,    [wb]   ; ebx = b
+    40 00000051 F7E3                    	mul    ebx           ; eax:edx = a*b
+    41                                  
+    42 00000053 B90B000000              	mov    ecx,    11    ; ecx = 11
+    43 00000058 F7F1                    	div    ecx           ; eax:edx / eax
+    44                                  
+    45 0000005A 890425[00000000]        	mov    [wres], eax   ; wres = eax
+    46 00000061 C3                      	ret
+    47                                  
+    48                                  
+    49                                  int_asm_func:
+    50 00000062 31C0                    	xor    eax,    eax 
+    51 00000064 31DB                    	xor    ebx,    ebx 
+    52 00000066 31C9                    	xor    ecx,    ecx 
+    53 00000068 31D2                    	xor    edx,    edx 
+    54                                  
+    55 0000006A 668B0425[00000000]      	mov    ax,     [ia]   ; ax = wa
+    56 00000072 668B1C25[00000000]      	mov    bx,     [ib]   ; bx = wb
+    57 0000007A 6639D8                  	cmp    ax,     bx     ; ax==bx?
+    58 0000007D 7404                    	je     @a_is_b_int
+    59 0000007F 720F                    	jb     @a_lower_than_b_int
+    60 00000081 771C                    	ja     @a_higher_than_b_int
+    61                                  
+    62                                  	@a_is_b_int:
+    63 00000083 B80B000000              	mov    eax,    11     ; eax = 11
+    64 00000088 890425[00000000]        	mov    [ires], eax    ; wres = 11
+    65 0000008F C3                      	ret
+    66                                  
+    67                                  	@a_lower_than_b_int:
+    68 00000090 66F7E8                  	imul   ax             ; ax:dx = ax * ax
+    69 00000093 66F7FB                  	idiv   bx             ; 
+    70 00000096 66890425[00000000]      	mov    [ires], ax     ;
+    71 0000009E C3                      	ret
+    72                                  
+    73                                  	@a_higher_than_b_int:
+    74 0000009F 31C0                    	xor    eax,   eax
+    75 000000A1 31DB                    	xor    ebx,   ebx
+    76 000000A3 668B0425[00000000]      	mov    ax,    [ia]   ; eax = a
+    77 000000AB 668B1C25[00000000]      	mov    bx,    [ib]   ; ebx = b
+    78 000000B3 F7EB                    	imul   ebx           ; eax:edx = a*b
+    79                                  
+    80 000000B5 B90B000000              	mov    ecx,    11    ; ecx = 11
+    81 000000BA F7F9                    	idiv   ecx           ; eax:edx / eax
+    82                                  
+    83 000000BC 890425[00000000]        	mov    [ires], eax   ; wres = eax
+    84 000000C3 C3                      	ret
