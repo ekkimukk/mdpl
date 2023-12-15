@@ -5,15 +5,15 @@ extern void asm_input(void);
 extern void int_asm_func(void);
 
 uint16_t a, b;
-uint32_t res;
+int32_t res;
 
 void C_func() {
   if (a == b) {
     printf("11\n");
   } else if (a < b) {
-    printf("%d\n", (uint32_t)a * a / b);
+    printf("%d\n", (int32_t)a * a / b);
   } else {
-    printf("%d\n", (uint32_t)b * a / 11);
+    printf("%d\n", (int32_t)b * a / 11);
   }
 }
 
@@ -46,8 +46,9 @@ int main(int argc, char *argv[]) {
   a = 0;
   b = 0;
   asm_input();
-  C_func();
+  printf("%d\n", a);
   // int_asm_func();
+  // printf("%u\n", res);
 
   return 0;
 }
