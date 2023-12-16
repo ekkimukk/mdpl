@@ -1,0 +1,269 @@
+     1                                  %define STDIN 0;    
+     2                                  %define STDOUT 1;    
+     3                                  %define SYS_WRITE  0x01
+     4                                  %define SYS_READ   0x00
+     5                                  
+     6                                  section .data
+     7                                      
+     8 00000000 496E70757420766172-         msg_1 db 'Input variables:', 0xa, 0
+     8 00000009 6961626C65733A0A00 
+     9                                      len_1 equ $ - msg_1
+    10                                  
+    11 00000012 61203D2000                  msg_2 db 'a = ', 0
+    12                                      len_2 equ $ - msg_2
+    13                                  
+    14 00000017 62203D2000                  msg_3 db 'b = ', 0
+    15                                      len_3 equ $ - msg_3
+    16                                      
+    17 0000001C 416E737765723A0A00          msg_4 db 'Answer:', 0xa, 0
+    18                                      len_4 equ $ - msg_4
+    19                                  
+    20 00000025 0A4573206973742053-         msg_5 db 0xa, 'Es ist Scheiße passiert!', 0xa
+    20 0000002E 63686569C39F652070-
+    20 00000037 61737369657274210A 
+    21                                      len_5 equ $ - msg_5
+    22                                      
+    23                                  
+    24 00000040 07                          len_inp db 7                
+    25 00000041 0C                          len_out db 12               
+    26 00000042 00                          len_cur db 0                
+    27 00000043 00                          sign db 0                   
+    28                                      
+    29 00000044 00<rep Ch>                  buffer times 12 db 0        
+    30                                      
+    31 00000050 0000                        a dw 0
+    32 00000052 0000                        b dw 0
+    33 00000054 00000000                    res dd 0
+    34                                  
+    35                                  section .text
+    36                                  global _start
+    37                                  
+    38                                  
+    39                                  _start:
+    40                                      ;   Вывод 1-го сообщения
+    41 00000000 48BE-                       mov rsi, msg_1              
+    41 00000002 [0000000000000000] 
+    42 0000000A BA12000000                  mov rdx,len_1               
+    43 0000000F E886000000                  call write
+    44                                      
+    45                                      ;
+    46                                      ;   Вывод 2-го сообщения
+    47 00000014 48BE-                       mov rsi, msg_2
+    47 00000016 [1200000000000000] 
+    48 0000001E BA05000000                  mov rdx, len_2
+    49 00000023 E872000000                  call write
+    50                                      
+    51                                      ;
+    52                                      ;   Ввод a
+    53 00000028 E87A000000                  call read
+    54 0000002D E8BD000000                  call to_int                 ;   преобразовать 'a' в число
+    55 00000032 66890425[50000000]          mov word [a], ax            ;    тогда 'a'
+    56 0000003A E85A000000                  call test
+    57 0000003F E888000000                  call buffer_cl              ;   очистка буфера
+    58                                      
+    59                                      ;
+    60                                      ;   Вывод 3-го сообщения
+    61 00000044 48BE-                       mov rsi, msg_3
+    61 00000046 [1700000000000000] 
+    62 0000004E BA05000000                  mov rdx,len_3
+    63 00000053 E842000000                  call write
+    64                                      
+    65                                      ;
+    66                                      ;   Ввод b
+    67 00000058 E84A000000                  call read
+    68 0000005D E88D000000                  call to_int
+    69 00000062 66890425[52000000]          mov word [b], ax            ;    тогда 'b'
+    70 0000006A E82A000000                  call test
+    71 0000006F E858000000                  call buffer_cl
+    72                                      
+    73                                      ;
+    74                                      ;   Рассчет значений
+    75 00000074 E895010000                  call culculate              ;    тогда 'res'
+    76 00000079 E800010000                  call to_str                 ;   преобразовать 'res' в строку
+    77                                      
+    78                                      ;
+    79                                      ;   Вывод результата
+    80 0000007E 48BE-                       mov rsi, buffer
+    80 00000080 [4400000000000000] 
+    81 00000088 8A1425[42000000]            mov dl, byte [len_cur]
+    82 0000008F E806000000                  call write
+    83                                  
+    84                                      ;
+    85                                      ;   Выод из программы
+    86 00000094 E869010000                  call exit
+    87                                  
+    88                                  
+    89                                  
+    90                                  test:
+    91 00000099 C3                          ret
+    92                                  
+    93                                  ;   Функция вывода
+    94                                  write:
+    95 0000009A B801000000                  mov rax, SYS_WRITE  ;   sys_write()
+    96 0000009F BF01000000                  mov rdi, STDOUT     ;   file descriptor (stdout)
+    97 000000A4 0F05                        syscall
+    98 000000A6 C3                          ret
+    99                                  
+   100                                  
+   101                                  ;   Функция ввода
+   102                                  read:
+   103 000000A7 B800000000                  mov eax, SYS_READ   ;   sys_read()
+   104 000000AC BF00000000                  mov rdi, STDIN      ;   file descriptor (stdin)
+   105 000000B1 48BE-                       mov rsi, buffer     ;   message to write
+   105 000000B3 [4400000000000000] 
+   106 000000BB BA[40000000]                mov edx, len_inp    ;   message length
+   107 000000C0 0F05                        syscall             ;   execute read(0, buffer, buf_size)
+   108 000000C2 FEC8                        dec al
+   109 000000C4 880425[42000000]            mov byte [len_cur], al
+   110 000000CB C3                          ret
+   111                                  
+   112                                  
+   113                                  ;   Очистка буфера
+   114                                  buffer_cl:
+   115 000000CC 31C9                        xor ecx, ecx
+   116 000000CE 8A0C25[42000000]            mov cl, byte [len_cur]
+   117 000000D5 B800000000                  mov eax, 0
+   118                                      clear:
+   119 000000DA 67C680[44000000]00              mov byte [buffer + eax], ''
+   120 000000E2 FFC0                            inc eax
+   121 000000E4 E2F4                            loop clear
+   122 000000E6 C60425[42000000]00          mov byte [len_cur], 0
+   123 000000EE C3                          ret
+   124                                  ;   Функции преобраования в число
+   125                                  to_int:
+   126 000000EF C60425[43000000]00          mov byte [sign], 0
+   127 000000F7 BA00000000                  mov edx, 0                  ;   edx тогда адрес строки
+   128 000000FC 678A9A[44000000]            mov bl, [buffer + edx]       ;   bl  тогда первый символ строки
+   129 00000103 80FB2D                      cmp bl,'-'
+   130 00000106 7513                        jne int_no_sign
+   131 00000108 FFC2                        inc edx                     ;   '+' адрес строки
+   132 0000010A FEC8                        dec al                      ;   '-' длина строки
+   133 0000010C 880425[42000000]            mov byte [len_cur], al
+   134 00000113 C60425[43000000]01          mov byte [sign], 1 
+   135                                      
+   136                                  int_no_sign:
+   137 0000011B 31C9                        xor ecx, ecx
+   138 0000011D 66BF0A00                    mov di,10                   ;   di тогда мноитель
+   139 00000121 8A0C25[42000000]            mov cl, [len_cur]           ;   cx тогда счётчик цикла
+   140                                      ;   jecxz studw_error          ;   длина = 0 тогда ошибка
+   141                                      
+   142 00000128 4831C0                      xor rax,rax
+   143 0000012B 4831DB                      xor rbx,rbx
+   144                                      
+   145                                  next_symb:
+   146 0000012E 678A9A[44000000]                mov bl, [buffer + edx]  ;   bl тогда символ строки
+   147 00000135 FFC2                            inc edx                 ;   '+' адрес
+   148 00000137 80FB30                          cmp bl,'0'
+   149 0000013A 0F8CA9000000                    jl error                ;   код символа < '0' тогда ошибка
+   150 00000140 80FB39                          cmp bl,'9'
+   151 00000143 0F8FA0000000                    jg error                ;   код символа > '9' тогда ошибка
+   152 00000149 80EB30                          sub bl,'0'              ;   преобразование в число
+   153 0000014C 52                              push rdx
+   154 0000014D 66F7E7                          mul di                  ;   ax тогда ax * 10
+   155 00000150 5A                              pop rdx
+   156 00000151 0F8292000000                    jc error              ;   результат > 2^16  тогда ошибка
+   157 00000157 6601D8                          add ax, bx
+   158 0000015A 0F8289000000                    jc error              ;   переполнение      тогда ошибка
+   159 00000160 E2CC                        loop next_symb              ;   цикл
+   160 00000162 8A1425[43000000]            mov dl, byte [sign]
+   161 00000169 84D2                        test dl, dl
+   162 0000016B 740A                        jz int_plus
+   163 0000016D 663D0080                    cmp ax, 32768              ;   модуль отр.числа  <= 32768
+   164 00000171 7776                        ja error                  ;   больше            тогда ошибка
+   165 00000173 66F7D8                      neg ax
+   166 00000176 C3                          ret
+   167                                      
+   168                                  int_plus:
+   169 00000177 663DFF7F                    cmp ax,32767              ;   пол.число  <= 32767
+   170 0000017B 776C                        ja error                    ;   больше            тогда ошибка
+   171 0000017D C3                          ret
+   172                                  
+   173                                  
+   174                                  ;   Функции преобраования в строку
+   175                                  to_str:
+   176 0000017E C60425[43000000]00          mov byte [sign], 0
+   177 00000186 8B0425[54000000]            mov eax, dword [res]
+   178 0000018D B900000000                  mov ecx, 0
+   179 00000192 85C0                        test eax, eax               ;   проверка знака
+   180 00000194 BB0A000000                  mov ebx, 10
+   181 00000199 790A                        jns str_no_sign
+   182 0000019B C60425[43000000]01          mov byte [sign], 1          ;   добавление знака
+   183 000001A3 F7D8                        neg eax
+   184                                  str_no_sign:
+   185 000001A5 31D2                        xor edx, edx            ;   обнуление старшей части двойного слова
+   186 000001A7 F7F3                        div ebx                    ;   edx:eax / ebx
+   187 000001A9 6683C230                    add dx,'0'                ;   преобразование в код символа
+   188 000001AD 6652                        push dx                    ;   сохранение в стек
+   189 000001AF FFC1                        inc ecx
+   190 000001B1 85C0                        test eax, eax            ;   проверка AX
+   191 000001B3 75F0                        jnz str_no_sign             ;   частное не 0 тогда икл
+   192                                  if_sing_str:
+   193 000001B5 8A1425[43000000]            mov dl, byte [sign]
+   194 000001BC 84D2                        test dl, dl
+   195 000001BE 740A                        jz str
+   196 000001C0 67C680[44000000]2D          mov byte [buffer + eax], '-'
+   197 000001C8 FFC0                        inc eax
+   198                                  str:                        ;   икл из стека
+   199 000001CA 665A                        pop dx
+   200 000001CC 678890[44000000]            mov byte [buffer + eax],dl
+   201 000001D3 FFC0                        inc eax                    ;   '+' адрес буфера
+   202 000001D5 E2F3                        loop str
+   203 000001D7 67C680[44000000]0A          mov byte [buffer + eax], 0x0a
+   204 000001DF FFC0                        inc eax
+   205 000001E1 880425[42000000]            mov byte [len_cur], al
+   206 000001E8 C3                          ret
+   207                                  
+   208                                  
+   209                                  ;   Функция вывода ошибки   
+   210                                  error:
+   211 000001E9 48BE-                       mov rsi, msg_5
+   211 000001EB [2500000000000000] 
+   212 000001F3 BA1B000000                  mov rdx,len_5
+   213 000001F8 E89DFEFFFF                  call write
+   214 000001FD E800000000                  call exit
+   215                                      
+   216                                  
+   217                                  ;   Функция выода из прораммы
+   218                                  exit:
+   219 00000202 BB00000000                  mov ebx, 0
+   220 00000207 B83C000000                  mov rax,60                  ;   sys_exit()
+   221 0000020C 0F05                        syscall
+   222                                      
+   223                                      
+   224                                  
+   225                                  culculate:
+   226 0000020E 4889E5                      mov rbp, rsp; for correct debugging
+   227                                      ; Сравниваем a и b  
+   228 00000211 668B0425[50000000]          mov ax, word [a]
+   229 00000219 663B0425[52000000]          cmp ax, word [b]
+   230                                  
+   231                                      ; Применяем условный переход для каждого условия
+   232 00000221 7F04                        jg a_greater_than_b
+   233 00000223 741E                        je a_equals_b
+   234 00000225 7C28                        jl a_less_than_b ; поставить флаг вместо l
+   235                                  
+   236                                  a_greater_than_b:
+   237 00000227 31D2                        xor edx, edx
+   238 00000229 6699                        cwd
+   239 0000022B 66F73425[50000000]          div word [a]
+   240 00000233 6689D0                      mov ax, dx
+   241 00000236 6683C001                    add ax, 1
+   242 0000023A 66890425[54000000]          mov word [res], ax
+   243 00000242 C3                          ret
+   244                                  
+   245                                  a_equals_b:
+   246                                      ; Результат = 0
+   247 00000243 C70425[54000000]0B-         mov dword [res], 11
+   247 0000024B 000000             
+   248 0000024E C3                          ret
+   249                                  
+   250                                  a_less_than_b:
+   251 0000024F 4831C0                      xor rax, rax
+   252 00000252 4831DB                      xor rbx, rbx
+   253 00000255 4831D2                      xor rdx, rdx
+   254 00000258 668B0425[50000000]          mov ax, [a]
+   255 00000260 66F7E8                      imul ax
+   256 00000263 668B1C25[52000000]          mov bx, [b]
+   257 0000026B 66F7FB                      idiv bx
+   258 0000026E 890425[54000000]            mov [res], eax  ; сохраняем 64-битный результат
+   259 00000275 C3                      ret

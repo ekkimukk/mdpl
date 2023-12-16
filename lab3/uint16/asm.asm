@@ -21,6 +21,9 @@ section .data
 	len_inp   db        7
 	buffer times 12 db 0
 
+	msg_err   db        'Error', 0
+	len_err   equ       $ - msg_err
+
 
 section .text
 	global asm_input
@@ -32,7 +35,7 @@ section .text
 ;    ||         ||
 ;   \  /       \  /
 ;    \/         \/
-asm_input:
+main:
 	xor       eax,      eax     ;    \/
 	xor       ebx,      ebx     ;    \/
 	xor       ecx,      ecx     ;    \/
@@ -53,6 +56,9 @@ asm_input:
 	mov       ecx,      buffer
 	call      read
 	call      to_int
+	mov       edx,      65536
+	cmp       eax,      edx
+	jae       @error
 	mov       [a],      eax
 
 	; b = _
@@ -65,6 +71,12 @@ asm_input:
 	mov       ecx,      buffer
 	call      read
 	call      to_int
+	mov       edx,      65536
+	cmp       eax,      edx
+	jae       @error
+	mov       edx,      0
+	cmp       eax,      edx
+	je       @error
 	mov       [b],      eax
 
 ; calculations
@@ -148,6 +160,8 @@ to_int:
 	mov       edx,      buffer  ; our string
 .top:
 	movzx     ecx,   byte [edx] ; get a character
+	cmp       ecx,      '-'
+	je        @error
 	inc       edx               ; ready for next one
 	cmp       ecx,      '0'     ; valid?
 	jb        .done
@@ -159,3 +173,9 @@ to_int:
 	jmp       .top              ; until done
 .done:
 ret
+
+@error:
+	mov       edx,      len_err
+	mov       ecx,      msg_err
+	call      write
+int 128

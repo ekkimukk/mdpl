@@ -4,7 +4,9 @@ section .rodata
 section .data
 	default rel
 	extern scanf, printf, exit
-	extern a, b, res
+	a dw 0
+	b dw 0
+	res dw 0
 
 	msg_1     db        'Input values:', 0xa, 0
 	len_1     equ       $ - msg_1
@@ -24,18 +26,19 @@ section .data
 	len_cur   db        0
 	sign      db        0
 
+	msg_err   db        'Error', 0
+	len_err   equ       $ - msg_err
+
 
 section .text
-	global asm_input
-	global int_asm_func
-
+	global _start
 
 ;    |___INPUT___|  
 ;    ||         ||
 ;    ||         ||
 ;   \  /       \  /
 ;    \/         \/
-asm_input:
+_start:
 	xor       rax,      rax     ;  \\\///
 	xor       rbx,      rbx     ;   \\//
 	xor       rcx,      rcx     ;    \/
@@ -54,7 +57,14 @@ asm_input:
 	; reading a
 	call      read
 	call      @to_int
-	mov       [a],      eax
+	mov       edx,      32768
+	cmp       eax,      edx
+	jge       @error
+	mov       edx,      -32768
+	cmp       eax,      edx
+	jle       @error
+	mov    dword [a],      eax
+	call @buffer_cleaning
 
 	; b = _
 	mov       edx,      len_b
@@ -66,7 +76,17 @@ asm_input:
 	mov       ecx,      buffer
 	call      read
 	call      @to_int
-	mov       [b],      eax
+	mov       edx,      32768
+	cmp       eax,      edx
+	jge       @error
+	mov       edx,      -32768
+	cmp       eax,      edx
+	jle       @error
+	mov       edx,      0
+	cmp       eax,      edx
+	je        @error
+	mov    dword [b],      eax
+	call @buffer_cleaning
 
 
 ; calculations
@@ -84,21 +104,21 @@ int_asm_func:
 	jg     @a_higher_than_b_int
 
 	@a_is_b_int:
-	mov    rax,    11     ; eax = 11
-	mov    [res],  rax    ; wres = 11
+	mov    eax,    11     ; eax = 11
+	mov    [res],  eax    ; wres = 11
 	jmp    @res
 
 	@a_lower_than_b_int:
 	imul   eax            ; edx:eax = a*a
 	idiv   ebx            ; eax = a*a/b
-	mov    [res], rax     ;
+	mov    [res], eax     ;
 	jmp    @res
 
 	@a_higher_than_b_int:
 	imul   ebx           ; eax:edx = a*b
 	mov    ecx,    11    ; ecx = 11
 	idiv   ecx           ; eax:edx / eax
-	mov    [res], eax    ; res = eax
+	mov    dword [res], eax    ; res = eax
 	jmp    @res
 
 @res:
@@ -107,23 +127,39 @@ int_asm_func:
 	mov       ecx,      msg_res
 	call      write
 
-    sub       rsp,      8        ; re-align the stack to 16 before calling another function
-    ; Call printf.
-    mov       rsi,      [res]    ; "%x" takes a 32-bit unsigned int
-    lea       rdi,      [rel format]
-    xor       rax,      rax      ; AL=0  no FP args in XMM regs
-    call      printf
-    ; Return from main.
-    xor       rax,      rax
-    add       rsp,      8
-ret
+	call @to_str ; res -> str
 
+	mov rsi, buffer
+	mov dl, byte [len_cur]
+	call @new_write
+
+	mov ebx, 0
+	mov rax, 60
+	syscall
+ret
 
 ;    |_FUNCTIONS_|  
 ;    ||         ||
 ;    ||         ||
 ;   \  /       \  /
 ;    \/         \/
+@new_write:
+	mov rax, 1
+	mov rdi, 1
+	syscall
+ret
+
+@buffer_cleaning:
+	xor ecx, ecx
+	mov cl, byte [len_cur]
+	mov eax, 0
+	clear:
+	mov byte [buffer + eax], ''
+	inc eax
+	loop clear
+	mov byte [len_cur], 0
+ret
+
 write:
 	mov       ebx,      1
 	mov       eax,      4
@@ -144,6 +180,42 @@ read:
 	dec       al
 	mov       byte      [len_cur], al
 ret
+
+
+
+@to_str:
+	mov byte [sign], 0
+	mov eax, dword [res]
+	mov ecx, 0
+	test eax, eax
+	mov ebx, 10
+	jns str_no_sign
+	mov byte [sign], 1
+	neg eax
+str_no_sign:
+	xor edx, edx
+	div ebx
+	add dx, '0'
+	push dx
+	inc ecx
+	test eax, eax
+	jnz str_no_sign
+if_sign_str:
+	mov dl, byte [sign]
+	test dl, dl
+	jz str
+	mov byte [buffer+eax], '-'
+	inc eax
+str:
+	pop dx
+	mov byte [buffer+eax], dl
+	inc eax
+	loop str
+	mov byte [buffer+eax], 0x0a
+	inc eax
+	mov byte [len_cur], al
+ret
+
 
 
 @to_int:
@@ -188,3 +260,11 @@ ret
 @sign_done:
 	neg       eax
 ret
+
+@error:
+	mov       edx,      len_err
+	mov       ecx,      msg_err
+	call      write
+	mov ebx, 0
+	mov rax, 60
+	syscall
