@@ -1,0 +1,193 @@
+     1                                  section .rodata
+     2 00000000 2523640A00                  format db "%#d", 10, 0
+     3                                  
+     4                                  section .data
+     5                                  	default rel
+     6                                  	extern scanf, printf, exit
+     7                                  	extern a, b, res
+     8                                  
+     9 00000000 496E7075742076616C-     	msg_1     db        'Input values:', 0xa, 0
+     9 00000009 7565733A0A00       
+    10                                  	len_1     equ       $ - msg_1
+    11                                  
+    12 0000000F 61203D2000              	msg_a     db        'a = ', 0
+    13                                  	len_a     equ       $ - msg_a
+    14                                  
+    15 00000014 62203D2000              	msg_b     db        'b = ', 0
+    16                                  	len_b     equ       $ - msg_b
+    17                                  
+    18 00000019 726573756C74203D20-     	msg_res   db        'result = ', 0
+    18 00000022 00                 
+    19                                  	len_res   equ       $ - msg_res
+    20                                  
+    21 00000023 07                      	len_inp   db        7
+    22 00000024 00<rep Ch>              	buffer    times     12 db 0
+    23                                  
+    24 00000030 00                      	len_cur   db        0
+    25 00000031 00                      	sign      db        0
+    26                                  
+    27                                  
+    28                                  section .text
+    29                                  	global asm_input
+    30                                  	global int_asm_func
+    31                                  
+    32                                  
+    33                                  ;    |___INPUT___|  
+    34                                  ;    ||         ||
+    35                                  ;    ||         ||
+    36                                  ;   \  /       \  /
+    37                                  ;    \/         \/
+    38                                  asm_input:
+    39 00000000 4831C0                  	xor       rax,      rax     ;  \\\///
+    40 00000003 4831DB                  	xor       rbx,      rbx     ;   \\//
+    41 00000006 4831C9                  	xor       rcx,      rcx     ;    \/
+    42 00000009 4831D2                  	xor       rdx,      rdx     ; cleaning
+    43                                  
+    44                                  	; "Input values"
+    45 0000000C BA0F000000              	mov       edx,      len_1   ;
+    46 00000011 B9[00000000]            	mov       ecx,      msg_1   ;
+    47 00000016 E8C5000000              	call      write
+    48                                  
+    49                                  	; a = _
+    50 0000001B BA05000000              	mov       edx,      len_a
+    51 00000020 B9[0F000000]            	mov       ecx,      msg_a
+    52 00000025 E8B6000000              	call      write
+    53                                  
+    54                                  	; reading a
+    55 0000002A E8BE000000              	call      read
+    56 0000002F E8E2000000              	call      @to_int
+    57 00000034 8905(00000000)          	mov       [a],      eax
+    58                                  
+    59                                  	; b = _
+    60 0000003A BA05000000              	mov       edx,      len_b
+    61 0000003F B9[14000000]            	mov       ecx,      msg_b
+    62 00000044 E897000000              	call      write
+    63                                  
+    64                                  	; reading b
+    65 00000049 BA[23000000]            	mov       edx,      len_inp
+    66 0000004E B9[24000000]            	mov       ecx,      buffer
+    67 00000053 E895000000              	call      read
+    68 00000058 E8B9000000              	call      @to_int
+    69 0000005D 8905(00000000)          	mov       [b],      eax
+    70                                  
+    71                                  
+    72                                  ; calculations
+    73                                  int_asm_func:
+    74 00000063 4831C0                  	xor    rax,    rax 
+    75 00000066 4831DB                  	xor    rbx,    rbx 
+    76 00000069 4831C9                  	xor    rcx,    rcx 
+    77 0000006C 4831D2                  	xor    rdx,    rdx 
+    78                                  
+    79 0000006F 8B05(00000000)          	mov    eax,     [a]    ; eax = a
+    80 00000075 8B1D(00000000)          	mov    ebx,     [b]    ; ebx = b
+    81 0000007B 39D8                    	cmp    eax,     ebx    ; eax==ebx?
+    82 0000007D 7404                    	je     @a_is_b_int
+    83 0000007F 7C10                    	jl     @a_lower_than_b_int
+    84 00000081 7F1B                    	jg     @a_higher_than_b_int
+    85                                  
+    86                                  	@a_is_b_int:
+    87 00000083 B80B000000              	mov    rax,    11     ; eax = 11
+    88 00000088 488905(00000000)        	mov    [res],  rax    ; wres = 11
+    89 0000008F EB1E                    	jmp    @res
+    90                                  
+    91                                  	@a_lower_than_b_int:
+    92 00000091 F7E8                    	imul   eax            ; edx:eax = a*a
+    93 00000093 F7FB                    	idiv   ebx            ; eax = a*a/b
+    94 00000095 488905(00000000)        	mov    [res], rax     ;
+    95 0000009C EB11                    	jmp    @res
+    96                                  
+    97                                  	@a_higher_than_b_int:
+    98 0000009E F7EB                    	imul   ebx           ; eax:edx = a*b
+    99 000000A0 B90B000000              	mov    ecx,    11    ; ecx = 11
+   100 000000A5 F7F9                    	idiv   ecx           ; eax:edx / eax
+   101 000000A7 8905(00000000)          	mov    [res], eax    ; res = eax
+   102 000000AD EB00                    	jmp    @res
+   103                                  
+   104                                  @res:
+   105                                  	; result = _
+   106 000000AF BA0A000000              	mov       edx,      len_res
+   107 000000B4 B9[19000000]            	mov       ecx,      msg_res
+   108 000000B9 E822000000              	call      write
+   109                                  
+   110 000000BE 4883EC08                    sub       rsp,      8        ; re-align the stack to 16 before calling another function
+   111                                      ; Call printf.
+   112 000000C2 488B35(00000000)            mov       rsi,      [res]    ; "%x" takes a 32-bit unsigned int
+   113 000000C9 488D3D(00000000)            lea       rdi,      [rel format]
+   114 000000D0 4831C0                      xor       rax,      rax      ; AL=0  no FP args in XMM regs
+   115 000000D3 E8(00000000)                call      printf
+   116                                      ; Return from main.
+   117 000000D8 4831C0                      xor       rax,      rax
+   118 000000DB 4883C408                    add       rsp,      8
+   119 000000DF C3                      ret
+   120                                  
+   121                                  
+   122                                  ;    |_FUNCTIONS_|  
+   123                                  ;    ||         ||
+   124                                  ;    ||         ||
+   125                                  ;   \  /       \  /
+   126                                  ;    \/         \/
+   127                                  write:
+   128 000000E0 BB01000000              	mov       ebx,      1
+   129 000000E5 B804000000              	mov       eax,      4
+   130 000000EA CD80                    	int 80h
+   131 000000EC C3                      ret
+   132                                  
+   133                                  read:
+   134                                  ;	mov       ebx,      1
+   135                                  ;	mov       eax,      3
+   136                                  ;	int 80h
+   137                                  ;ret
+   138 000000ED BA[23000000]            	mov       edx,      len_inp
+   139 000000F2 B9[24000000]            	mov       ecx,      buffer
+   140 000000F7 B800000000              	mov       eax,      0
+   141 000000FC BF00000000              	mov       rdi,      0
+   142 00000101 48BE-                   	mov       rsi,      buffer
+   142 00000103 [2400000000000000] 
+   143 0000010B 0F05                    	syscall
+   144 0000010D FEC8                    	dec       al
+   145 0000010F 8805(30000000)          	mov       byte      [len_cur], al
+   146 00000115 C3                      ret
+   147                                  
+   148                                  
+   149                                  @to_int:
+   150 00000116 4831C0                  	xor       rax,      rax     ;  \\\///
+   151 00000119 4831DB                  	xor       rbx,      rbx     ;   \\//
+   152 0000011C 4831C9                  	xor       rcx,      rcx     ;    \/
+   153 0000011F 4831D2                  	xor       rdx,      rdx     ; cleaning
+   154                                  
+   155 00000122 BA[24000000]            	mov       edx,      buffer
+   156 00000127 670FB60A                	movzx     ecx,    byte [edx] ; 
+   157 0000012B 83F92D                  	cmp       ecx,      '-'      ; is it minus?
+   158 0000012E 741D                    	je        @temp_sign
+   159 00000130 7500                    	jne       @unsign
+   160                                  
+   161                                  @unsign:
+   162 00000132 670FB60A                	movzx     ecx,    byte [edx]
+   163 00000136 FFC2                    	inc       edx
+   164 00000138 83F930                  	cmp       ecx,      '0'     ; valid?
+   165 0000013B 720F                    	jb        @unsign_done
+   166 0000013D 83F939                  	cmp       ecx,      '9'
+   167 00000140 770A                    	ja        @unsign_done
+   168 00000142 83E930                  	sub       ecx,      '0'     ; "convert" character to number
+   169 00000145 6BC00A                  	imul      eax,      10      ; multiply "result so far" by ten
+   170 00000148 01C8                    	add       eax,      ecx     ; add in current digit
+   171 0000014A EBE6                    	jmp       @unsign           ; until done
+   172                                  @unsign_done:
+   173 0000014C C3                      ret
+   174                                  
+   175                                  @temp_sign:
+   176 0000014D FFC2                    	inc       edx
+   177                                  @sign:
+   178 0000014F 670FB60A                	movzx     ecx,    byte [edx]
+   179 00000153 FFC2                    	inc       edx
+   180 00000155 83F930                  	cmp       ecx,      '0'     ; valid?
+   181 00000158 720F                    	jb        @sign_done
+   182 0000015A 83F939                  	cmp       ecx,      '9'
+   183 0000015D 770A                    	ja        @sign_done
+   184 0000015F 83E930                  	sub       ecx,      '0'     ; "convert" character to number
+   185 00000162 6BC00A                  	imul      eax,      10      ; multiply "result so far" by ten
+   186 00000165 01C8                    	add       eax,      ecx     ; add in current digit
+   187 00000167 EBE6                    	jmp       @sign             ; until done
+   188                                  @sign_done:
+   189 00000169 F7D8                    	neg       eax
+   190 0000016B C3                      ret

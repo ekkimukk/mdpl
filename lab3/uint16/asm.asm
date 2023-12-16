@@ -159,6 +159,3 @@ to_int:
 	jmp       .top              ; until done
 .done:
 ret
-
-to_sign_int:
-ret
