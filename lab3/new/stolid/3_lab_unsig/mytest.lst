@@ -219,35 +219,30 @@
    211                                      
    212                                  ;                        <<<     CALC     >>>
    213                                  culculate:
-   214                                  
-   215 000001CF 4831C0                      xor rax, rax
-   216 000001D2 4831DB                      xor rbx, rbx
-   217 000001D5 4831C9                      xor rcx, rcx
-   218 000001D8 4831D2                      xor rdx, rdx
-   219                                      
-   220                                      
-   221                                          ; a*b/11     , a > b
-   222                                          ; 11  , a = b
-   223                                          ; a*a/b , a < b
-   224                                          
-   225 000001DB 668B0425[43000000]              mov ax, word [a]
-   226 000001E3 668B1C25[45000000]              mov bx, word [b]
-   227 000001EB 6639D8                          cmp ax, bx
-   228 000001EE 7708                            ja @bg
-   229 000001F0 7411                            je @eq
-   230 000001F2 F7E8                    	    imul   eax            ; edx:eax = a*a
-   231 000001F4 F7FB                        	idiv   ebx            ; eax = a*a/b
-   232 000001F6 EB10                            jmp @end_if
-   233                                          ; a > b
-   234                                          @bg:
-   235 000001F8 F7EB                    	        imul   ebx           ; eax:edx = a*b
-   236 000001FA B90B000000              	        mov    ecx,    11    ; ecx = 11
-   237 000001FF F7F9                            	idiv   ecx           ; eax:edx / eax
-   238 00000201 EB05                            	jmp @end_if
-   239                                          ; a = b
-   240                                          @eq:
-   241 00000203 B80B000000                          mov eax, 11
-   242                                          @end_if:
-   243 00000208 890425[47000000]                mov dword [res], eax
-   244                                          
-   245 0000020F C3                              ret
+   214 000001CF 4831C0                      xor rax, rax
+   215 000001D2 4831DB                      xor rbx, rbx
+   216 000001D5 4831C9                      xor rcx, rcx
+   217 000001D8 4831D2                      xor rdx, rdx
+   218                                          ; a*b/11     , a > b
+   219                                          ; 11  , a = b
+   220                                          ; a*a/b , a < b
+   221 000001DB 668B0425[43000000]              mov ax, word [a]
+   222 000001E3 668B1C25[45000000]              mov bx, word [b]
+   223 000001EB 6639D8                          cmp ax, bx
+   224 000001EE 7708                            ja @bg
+   225 000001F0 7411                            je @eq
+   226 000001F2 F7E8                    	    imul   eax            ; edx:eax = a*a
+   227 000001F4 F7FB                        	idiv   ebx            ; eax = a*a/b
+   228 000001F6 EB10                            jmp @end_if
+   229                                          ; a > b
+   230                                          @bg:
+   231 000001F8 F7EB                    	        imul   ebx           ; eax:edx = a*b
+   232 000001FA B90B000000              	        mov    ecx,    11    ; ecx = 11
+   233 000001FF F7F9                            	idiv   ecx           ; eax:edx / eax
+   234 00000201 EB05                            	jmp @end_if
+   235                                          ; a = b
+   236                                          @eq:
+   237 00000203 B80B000000                          mov eax, 11
+   238                                          @end_if:
+   239 00000208 890425[47000000]                mov dword [res], eax
+   240 0000020F C3                              ret

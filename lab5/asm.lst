@@ -14,14 +14,13 @@
     14 00000003 D90425[00000000]        	fld      dword    [var55]  ; st(0) = 55
     15 0000000A D82425[00000000]        	fsub     dword    [b]      ; st(0) = 55 - b
     16 00000011 D80425[00000000]        	fadd     dword    [a]      ; st(0) = a + (55 - b)
-    17 00000018 DD1425[00000000]        	fst      qword    [Num]
-    18 0000001F C3                      	ret
-    19                                  	; denominator
-    20 00000020 D90425[04000000]        	fld      dword    [var88]  ;
-    21 00000027 DA3425[00000000]        	fidiv    dword    [c]      ;
-    22 0000002E D80425[08000000]        	fadd     dword    [var1]   ;
-    23 00000035 D91425[00000000]        	fst      dword    [Den]    ;
-    24                                  	; result
-    25 0000003C D83C25[00000000]        	fdivr    dword    [Num]    ;
-    26 00000043 D91425[00000000]        	fst      dword    [Res]    ;
-    27 0000004A C3                      ret
+    17 00000018 D91425[00000000]        	fst      dword    [Num]
+    18                                  	; denominator
+    19 0000001F D90425[04000000]        	fld      dword    [var88]  ;
+    20 00000026 DA3425[00000000]        	fidiv    dword    [c]      ;
+    21 0000002D D80425[08000000]        	fadd     dword    [var1]   ;
+    22 00000034 D91425[00000000]        	fst      dword    [Den]    ;
+    23                                  	; result
+    24 0000003B D83C25[00000000]        	fdivr    dword    [Num]    ;
+    25 00000042 D91425[00000000]        	fst      dword    [Res]    ;
+    26 00000049 C3                      ret

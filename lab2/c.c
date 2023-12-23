@@ -46,9 +46,9 @@ int main(int argc, char *argv[]) {
   scanf("%d", &ia);
   printf("b = ");
   scanf("%d", &ib);
-  C_func(ia, ib);
+  C_func();
   int_asm_func();
-  printf("%u\n", ires);
+  printf("%d\n", ires);
 
   return 0;
 }

@@ -52,12 +52,12 @@ int_asm_func:
 	xor    ecx,    ecx 
 	xor    edx,    edx 
 
-	mov    ax,     [ia]   ; ax = wa
-	mov    bx,     [ib]   ; bx = wb
-	cmp    ax,     bx     ; ax==bx?
+	mov    eax,     [ia]   ; ax = wa
+	mov    ebx,     [ib]   ; bx = wb
+	cmp    eax,     ebx     ; ax==bx?
 	je     @a_is_b_int
-	jb     @a_lower_than_b_int
-	ja     @a_higher_than_b_int
+	jl     @a_lower_than_b_int
+	jg     @a_higher_than_b_int
 
 	@a_is_b_int:
 	mov    eax,    11     ; eax = 11
@@ -65,16 +65,16 @@ int_asm_func:
 	ret
 
 	@a_lower_than_b_int:
-	imul   ax             ; ax:dx = ax * ax
-	idiv   bx             ; 
-	mov    [ires], ax     ;
+	imul   eax             ; ax:dx = ax * ax
+	idiv   ebx             ; 
+	mov    [ires], eax     ;
 	ret
 
 	@a_higher_than_b_int:
 	xor    eax,   eax
 	xor    ebx,   ebx
-	mov    ax,    [ia]   ; eax = a
-	mov    bx,    [ib]   ; ebx = b
+	mov    eax,    [ia]   ; eax = a
+	mov    ebx,    [ib]   ; ebx = b
 	imul   ebx           ; eax:edx = a*b
 
 	mov    ecx,    11    ; ecx = 11

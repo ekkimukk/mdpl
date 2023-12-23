@@ -52,33 +52,33 @@
     52 00000066 31C9                    	xor    ecx,    ecx 
     53 00000068 31D2                    	xor    edx,    edx 
     54                                  
-    55 0000006A 668B0425[00000000]      	mov    ax,     [ia]   ; ax = wa
-    56 00000072 668B1C25[00000000]      	mov    bx,     [ib]   ; bx = wb
-    57 0000007A 6639D8                  	cmp    ax,     bx     ; ax==bx?
-    58 0000007D 7404                    	je     @a_is_b_int
-    59 0000007F 720F                    	jb     @a_lower_than_b_int
-    60 00000081 771C                    	ja     @a_higher_than_b_int
+    55 0000006A 8B0425[00000000]        	mov    eax,     [ia]   ; ax = wa
+    56 00000071 8B1C25[00000000]        	mov    ebx,     [ib]   ; bx = wb
+    57 00000078 39D8                    	cmp    eax,     ebx     ; ax==bx?
+    58 0000007A 7404                    	je     @a_is_b_int
+    59 0000007C 7C0F                    	jl     @a_lower_than_b_int
+    60 0000007E 7F19                    	jg     @a_higher_than_b_int
     61                                  
     62                                  	@a_is_b_int:
-    63 00000083 B80B000000              	mov    eax,    11     ; eax = 11
-    64 00000088 890425[00000000]        	mov    [ires], eax    ; wres = 11
-    65 0000008F C3                      	ret
+    63 00000080 B80B000000              	mov    eax,    11     ; eax = 11
+    64 00000085 890425[00000000]        	mov    [ires], eax    ; wres = 11
+    65 0000008C C3                      	ret
     66                                  
     67                                  	@a_lower_than_b_int:
-    68 00000090 66F7E8                  	imul   ax             ; ax:dx = ax * ax
-    69 00000093 66F7FB                  	idiv   bx             ; 
-    70 00000096 66890425[00000000]      	mov    [ires], ax     ;
-    71 0000009E C3                      	ret
+    68 0000008D F7E8                    	imul   eax             ; ax:dx = ax * ax
+    69 0000008F F7FB                    	idiv   ebx             ; 
+    70 00000091 890425[00000000]        	mov    [ires], eax     ;
+    71 00000098 C3                      	ret
     72                                  
     73                                  	@a_higher_than_b_int:
-    74 0000009F 31C0                    	xor    eax,   eax
-    75 000000A1 31DB                    	xor    ebx,   ebx
-    76 000000A3 668B0425[00000000]      	mov    ax,    [ia]   ; eax = a
-    77 000000AB 668B1C25[00000000]      	mov    bx,    [ib]   ; ebx = b
-    78 000000B3 F7EB                    	imul   ebx           ; eax:edx = a*b
+    74 00000099 31C0                    	xor    eax,   eax
+    75 0000009B 31DB                    	xor    ebx,   ebx
+    76 0000009D 8B0425[00000000]        	mov    eax,    [ia]   ; eax = a
+    77 000000A4 8B1C25[00000000]        	mov    ebx,    [ib]   ; ebx = b
+    78 000000AB F7EB                    	imul   ebx           ; eax:edx = a*b
     79                                  
-    80 000000B5 B90B000000              	mov    ecx,    11    ; ecx = 11
-    81 000000BA F7F9                    	idiv   ecx           ; eax:edx / eax
+    80 000000AD B90B000000              	mov    ecx,    11    ; ecx = 11
+    81 000000B2 F7F9                    	idiv   ecx           ; eax:edx / eax
     82                                  
-    83 000000BC 890425[00000000]        	mov    [ires], eax   ; wres = eax
-    84 000000C3 C3                      	ret
+    83 000000B4 890425[00000000]        	mov    [ires], eax   ; wres = eax
+    84 000000BB C3                      	ret
